@@ -1,0 +1,34 @@
+.react-calendar-override {
+    background: #1F2937;
+    border: none;
+}
+
+.react-calendar-override .react-calendar__tile:enabled:hover,
+.react-calendar-override .react-calendar__navigation button:enabled:hover {
+    background: #10B981;
+    color: #D1FAE5;
+}
+
+.react-calendar-override .react-calendar__tile--active,
+.react-calendar-override .react-calendar__tile:enabled:focus,
+.react-calendar-override .react-calendar__navigation button:enabled:focus {
+    background: #10B981;
+    color: #D1FAE5;
+}
+
+.react-calendar-override .react-calendar__month-view__days__day--weekend {
+    color: #D1FAE5;
+}
+
+.react-calendar-override .react-calendar__month-view__days__day--neighboringMonth {
+    color: #10B981;
+}
+.react-calendar-override .react-calendar__tile:disabled,
+.react-calendar-override .react-calendar__navigation button:disabled {
+    background-color: #1F2937;
+    color: #4B5563;
+}
+
+.react-calendar-override .react-calendar__tile--now {
+    background: #1F2937;
+}
