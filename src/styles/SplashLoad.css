@@ -63,6 +63,10 @@
     animation: lds-ellipsis3 0.6s infinite;
 }
 
+.splash-hide {
+    animation: 3s splash-hide 1.5s forwards;
+}
+
 @keyframes lds-ellipsis1 {
     0% {
         transform: scale(0);
@@ -90,5 +94,17 @@
 
     100% {
         transform: translate(24px, 0);
+    }
+}
+
+@keyframes splash-hide {
+    from {
+        transform: translate(0, 0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translate(0, -100%);
+        opacity: 0;
     }
 }
