@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.292.0",
     "@types/react-calendar": "^3.9.0",
     "formik": "^2.2.9",
     "jose": "^4.12.0",

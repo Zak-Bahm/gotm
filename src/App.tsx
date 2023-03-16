@@ -4,6 +4,8 @@ import { RouterProvider } from "react-router-dom";
 import router from './routes';
 import { useState, useEffect } from 'react';
 
+import { DynamoDBClient, DynamoDBClientConfig } from "@aws-sdk/client-dynamodb";
+
 // initialize global user object
 window.usr = {
     name: '',
@@ -38,6 +40,17 @@ function App() {
 
         // set state values
         setUserPresent(isPresent);
+
+        // setup ddb client
+        const ddbConfig: DynamoDBClientConfig = {
+            credentials: {
+                accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
+                secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY
+            },
+            region: "us-east-1",
+        };
+        window.ddb = new DynamoDBClient(ddbConfig);
+
         setLoading(false);
     }, []);
 
