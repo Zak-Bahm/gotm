@@ -20,7 +20,7 @@ window.app = {
 
 // for the main component, render either the user register page
 // or the router if the user exists
-function Main({present, usrPresent}: {present: boolean, usrPresent: () => {}}) {
+function Main({present, usrPresent}: {present: boolean, usrPresent: () => void}) {
     return present ? <RouterProvider router={router} /> : <Register usrPresent={usrPresent}/>;
 }
 

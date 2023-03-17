@@ -1,6 +1,6 @@
 import NewUser from "../components/NewUser"
 
-function Register({usrPresent}: {usrPresent: () => {}}) {
+function Register({usrPresent}: {usrPresent: () => void}) {
     const componentClasses = "w-[80%] max-w-[500px] min-w-fit m-5";
 
     return (

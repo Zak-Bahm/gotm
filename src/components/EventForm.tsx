@@ -6,7 +6,7 @@ import {
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import '../styles/react-calendar.css';
-
+import { useNavigate } from 'react-router-dom';
 import { PutItemCommand, PutItemCommandInput, PutItemCommandOutput, PutItemInput } from "@aws-sdk/client-dynamodb";
 
 interface EventForm {
@@ -22,14 +22,15 @@ function convertEventToDDB(values: EventForm): PutItemInput["Item"] {
     const itemId = `${window.usr.id}/events/${createdTs}`;
     const endTs = values.endDate.toString();
     const input: PutItemInput["Item"] = {
-        "item-id": { S: itemId },
-        "end-ts": { N: endTs },
-        "name": { S: window.usr.name },
-        "owner-id": { S: window.usr.id },
-        "created-ts": { N: createdTs.toString() },
-        "title": { S: values.title },
-        "description": { S: values.description },
-        "public": { BOOL: values.public }
+        itemType: { S: "event" },
+        itemId: { S: itemId },
+        endTs: { N: endTs },
+        name: { S: window.usr.name },
+        ownerId: { S: window.usr.id },
+        createdTs: { N: createdTs.toString() },
+        title: { S: values.title },
+        description: { S: values.description },
+        public: { BOOL: values.public }
     }
 
     return input;
@@ -48,6 +49,7 @@ async function putEvent(values: EventForm): Promise<PutItemCommandOutput> {
 }
 
 function EventForm() {
+    const navigate = useNavigate();
     const tomorrow = new Date(Date.now() + 1 * 24 * 60 * 60 * 1000);
     const initialValues: EventForm = { title: '', description: '', endDate: tomorrow.valueOf(), public: false };
 
@@ -57,6 +59,7 @@ function EventForm() {
           onSubmit={async (values, actions) => {
             actions.setSubmitting(false);
             await putEvent(values);
+            navigate('/')
           }}
         >
         {({ setFieldValue }) => (

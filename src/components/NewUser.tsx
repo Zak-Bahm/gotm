@@ -48,7 +48,7 @@ async function createUser(values: NewUserForm) {
     localStorage.setItem("user-key", JSON.stringify(window.usr.key));
 }
 
-function NewUser({usrPresent}: {usrPresent: () => {}}) {
+function NewUser({usrPresent}: {usrPresent: () => void}) {
     const initialValues: NewUserForm = { name: '' };
 
     return (
