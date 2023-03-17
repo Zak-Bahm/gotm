@@ -33,9 +33,13 @@ async function createUser(values: NewUserForm) {
     // add user name
     privateJWK.name = values.name;
 
+    // create id
+    if (!privateJWK.x || privateJWK.x === '') return;
+    const id = privateJWK.x.slice(0, 8);
+
     // set global variables
     window.usr.name = values.name;
-    window.usr.id = privateJWK.x?.slice(0, 8) || '';
+    window.usr.id = id;
     window.usr.key = privateJWK;
 
     // persist new user data
