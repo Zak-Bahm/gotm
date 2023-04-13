@@ -19,8 +19,8 @@ interface EventForm {
 function convertEventToDDB(values: EventForm): PutItemInput["Item"] {
     // generate key values
     const createdTs = Date.now();
-    const itemId = `${window.usr.id}/events/${createdTs}`;
     const endTs = values.endDate.toString();
+    const itemId = `${window.usr.id}/events/${endTs}`;
     const input: PutItemInput["Item"] = {
         itemType: { S: "event" },
         itemId: { S: itemId },
