@@ -1,9 +1,10 @@
-import { formatDistanceToNow } from 'date-fns'
+import { formatDistanceToNow } from 'date-fns';
+import { GotmEvent } from './Event';
 
-function EventListItem({event, last}: {event: any, last: boolean}) {
-    const title = event.title?.S || 'Event';
-    const desc = event.description?.S || '';
-    const endTs = parseInt(event.endTs?.N || '0');
+function EventListItem({event, last}: {event: GotmEvent, last: boolean}) {
+    const title = event.title || 'Event';
+    const desc = event.description || '';
+    const endTs = event.endTs || 0;
 
     // determine formatted date string and time left
     let endDate = '';

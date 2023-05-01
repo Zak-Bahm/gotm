@@ -5,6 +5,7 @@ import router from './routes';
 import { useState, useEffect } from 'react';
 
 import { DynamoDBClient, DynamoDBClientConfig } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 
 // initialize global user object
 window.usr = {
@@ -54,7 +55,9 @@ function App() {
             },
             region: "us-east-1",
         };
-        window.ddb = new DynamoDBClient(ddbConfig);
+        const client = new DynamoDBClient(ddbConfig);
+        const ddbDocClient = DynamoDBDocumentClient.from(client);
+        window.ddb = ddbDocClient;
 
         setLoading(false);
     }, []);

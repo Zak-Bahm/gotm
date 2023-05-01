@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
-import SimpleLoad from './SimpleLoad';
+import SimpleLoad from '../SimpleLoad';
 
-import { QueryCommand, QueryCommandInput } from "@aws-sdk/client-dynamodb";
+import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { addYears } from 'date-fns'
 import EventListItem from './EventListItem';
+import { GotmEvent } from './Event';
 
 // for the events component, show the loading symbol if still loading,
 // otherwise a list of events
-function Events({loading, events}: {loading: boolean, events: any[] }) {
+function Events({loading, events}: {loading: boolean, events: GotmEvent[] }) {
     if (loading) return <SimpleLoad />;
     if (events.length === 0) return <p>No events found</p>;
 
@@ -32,17 +33,17 @@ function UserEvents({id}: {id: string}) {
         const getEvents = async () => {
             const now = Date.now();
             const future = addYears(now, 1).getTime();
-            const params: QueryCommandInput = {
+            const command = new QueryCommand({
                 TableName: window.app.tableName,
                 KeyConditionExpression: 'itemType = :itemType and itemId BETWEEN :itemId1 AND :itemId2',
                 ExpressionAttributeValues: {
-                    ":itemType": { S: "event" },
-                    ":itemId1": { S: `${userId}/events/${now}` },
-                    ":itemId2": { S: `${userId}/events/${future}` }
+                    ":itemType": "event",
+                    ":itemId1": `${userId}/events/${now}`,
+                    ":itemId2": `${userId}/events/${future}`
                 }
-            };
+            });
 
-            const data = await window.ddb.send(new QueryCommand(params));
+            const data = await window.ddb.send(command);
             setEvents(data.Items);
         }
 

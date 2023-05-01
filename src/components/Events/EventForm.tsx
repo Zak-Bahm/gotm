@@ -5,44 +5,38 @@ import {
 } from 'formik';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import '../styles/react-calendar.css';
+import '../../styles/react-calendar.css';
 import { useNavigate } from 'react-router-dom';
-import { PutItemCommand, PutItemCommandInput, PutItemCommandOutput, PutItemInput } from "@aws-sdk/client-dynamodb";
+import { PutCommand, PutCommandOutput } from "@aws-sdk/lib-dynamodb";
 
-interface EventForm {
-  title: string;
-  description: string;
-  endDate: number;
-  public: boolean;
-}
+import { EventForm, GotmEvent } from './Event';
 
-function convertEventToDDB(values: EventForm): PutItemInput["Item"] {
+function convertFormToEvent(values: EventForm): GotmEvent {
     // generate key values
     const createdTs = Date.now();
-    const endTs = values.endDate.toString();
+    const endTs = values.endDate;
     const itemId = `${window.usr.id}/events/${endTs}`;
-    const input: PutItemInput["Item"] = {
-        itemType: { S: "event" },
-        itemId: { S: itemId },
-        endTs: { N: endTs },
-        name: { S: window.usr.name },
-        ownerId: { S: window.usr.id },
-        createdTs: { N: createdTs.toString() },
-        title: { S: values.title },
-        description: { S: values.description },
-        public: { BOOL: values.public }
+    const ge: GotmEvent = {
+        itemType: "event",
+        itemId: itemId,
+        endTs: endTs,
+        name: window.usr.name,
+        ownerId: window.usr.id,
+        createdTs: createdTs,
+        title: values.title,
+        description: values.description,
+        public: values.public
     }
 
-    return input;
+    return ge;
 }
 
-async function putEvent(values: EventForm): Promise<PutItemCommandOutput> {
+async function putEvent(values: EventForm): Promise<PutCommandOutput> {
     // setup put command
-    const input: PutItemCommandInput = {
+    const command = new PutCommand({
         TableName: window.app.tableName,
-        Item: convertEventToDDB(values)
-    }
-    const command = new PutItemCommand(input);
+        Item: convertFormToEvent(values)
+    });
     const response = await window.ddb.send(command);
 
     return response;

@@ -1,4 +1,4 @@
-import UserEvents from "../components/UserEvents"
+import UserEvents from "../components/Events/UserEvents"
 
 function Home() {
     const greetings = [
