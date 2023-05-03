@@ -6,8 +6,8 @@ export interface EventForm {
 }
 
 export interface GotmEvent {
-    itemType: string;
-    itemId: string;
+    itemType: "event";
+    itemId: string; // usr.id/events/endTs
     endTs: number;
     name: string;
     ownerId: string;

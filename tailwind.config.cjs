@@ -5,7 +5,18 @@ module.exports = {
       "./src/**/*.{js,ts,jsx,tsx}",
     ],
     theme: {
-      extend: {},
+      extend: {
+        boxShadow: {
+            'dark-out': [
+                '5px 5px 10px #1a232f',
+                '-5px -5px 10px #242f3f'
+            ],
+            'light-in': [
+                'inset 5px 5px 10px #2f3745',
+                'inset -5px -5px 10px #3f4b5d'
+            ]
+        }
+      },
     },
     plugins: [],
 }

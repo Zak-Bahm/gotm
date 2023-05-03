@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import SimpleLoad from '../SimpleLoad';
 
 import { QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { addYears } from 'date-fns'
+import { addYears } from 'date-fns';
 import EventListItem from './EventListItem';
 import { GotmEvent } from './Event';
 

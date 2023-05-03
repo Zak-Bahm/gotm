@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import Home from './views/Home'
+import EventPage from './views/EventPage'
 import NewEvent from './views/NewEvent'
 
 const router = createBrowserRouter([
@@ -13,6 +14,10 @@ const router = createBrowserRouter([
             {
                 path: "new",
                 element: <NewEvent />
+            },
+            {
+                path: "",
+                element: <EventPage />
             }
         ]
     }

@@ -14,7 +14,7 @@ function EventListItem({event, last}: {event: GotmEvent, last: boolean}) {
         timeLeft = formatDistanceToNow(new Date(endTs), { addSuffix: true })
     }
 
-    return <li className="border-2 border-emerald-100 rounded-lg p-3 mt-4">
+    return <li className="shadow-dark-out rounded-lg p-7 mt-7">
         <h3 className="font-extrabold text-5xl">
             { title }
         </h3>

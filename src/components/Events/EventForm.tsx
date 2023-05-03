@@ -57,12 +57,12 @@ function EventForm() {
           }}
         >
         {({ setFieldValue }) => (
-          <Form className="flex flex-col font-extrabold">
+          <Form className="flex flex-col font-extrabold m-5 p-10 rounded-lg shadow-dark-out">
             <label htmlFor="title" className="font-extrabold text-3xl mb-3">What&apos;s the Event called?</label>
-            <Field id="title" type="text" name="title" className="border-2 border-emerald-100 rounded-lg p-3 bg-gray-800 mb-3"/>
+            <Field id="title" type="text" name="title" className="shadow-light-in bg-gray-700 rounded-lg p-3 mb-3"/>
 
             <label htmlFor="description" className="font-extrabold text-3xl mb-3">What&apos;s it about?</label>
-            <Field id="description" component="textarea" rows="8" name="description" className="border-2 border-emerald-100 rounded-lg p-3 bg-gray-800 mb-3"/>
+            <Field id="description" component="textarea" rows="8" name="description" className="shadow-light-in bg-gray-700 rounded-lg p-3 mb-3"/>
 
             <label htmlFor="endDate" className="font-extrabold text-3xl mb-3">When is it?</label>
             <Field id="endDate" type="hidden" name="endDate"/>
@@ -73,7 +73,7 @@ function EventForm() {
                 This is a public event
             </label>
 
-            <button type="submit" className='mt-12 border-2 border-emerald-100 rounded-lg p-3 text-2xl font-extrabold'>Create Event</button>
+            <button type="submit" className='mt-12 shadow-light-in bg-gray-700 rounded-lg p-3 text-2xl font-extrabold'>Create Event</button>
           </Form>
         )}
         </Formik>
