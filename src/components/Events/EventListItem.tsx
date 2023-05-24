@@ -1,5 +1,6 @@
 import { formatDistanceToNow } from 'date-fns';
 import { GotmEvent } from './Event';
+import { Link } from "react-router-dom";
 
 function EventListItem({event, last}: {event: GotmEvent, last: boolean}) {
     const title = event.title || 'Event';
@@ -14,15 +15,25 @@ function EventListItem({event, last}: {event: GotmEvent, last: boolean}) {
         timeLeft = formatDistanceToNow(new Date(endTs), { addSuffix: true })
     }
 
-    return <li className="shadow-dark-out rounded-lg p-7 mt-7">
-        <h3 className="font-extrabold text-5xl">
-            { title }
-        </h3>
-        <span className="text-emerald-400 text-xl">{ timeLeft }</span>
+    return <li className="shadow-dark-out rounded-lg p-7 mt-7 grid grid-flow-row auto-rows-max">
+        <div className="flex justify-between items-center">
+            <h3 className="font-extrabold text-5xl">
+                { title }
+            </h3>
+            <Link to={ event.itemId }>
+                <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-2xl font-extrabold'>Check it Out</button>
+            </Link>
+        </div>
 
-        <span className="font-bold text-3xl">{ endDate }</span>
+        <div className="flex justify-between items-center my-3">
+            <span className="text-emerald-400 text-xl">{ timeLeft }</span>
+            <span className="font-bold text-3xl">{ endDate }</span>
+        </div>
 
-        <p className="font-normal">{ desc }</p>
+        { desc.length > 0 ? <div>
+            <h5 className="font-extrabold text-xl mb-3">What&apos;s it about?</h5>
+            <p className="font-normal">{ desc }</p>
+        </div> : "" }
     </li>
 }
 

@@ -10,7 +10,7 @@ import { GotmEvent } from './Event';
 // otherwise a list of events
 function Events({loading, events}: {loading: boolean, events: GotmEvent[] }) {
     if (loading) return <SimpleLoad />;
-    if (events.length === 0) return <p>No events found</p>;
+    if (events.length === 0) return <p>Nothing to see here. Why don't you make a new event?</p>;
 
     return <ul className='list-none'>
         {events.map((e, i, events) => {

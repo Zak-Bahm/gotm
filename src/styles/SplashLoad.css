@@ -64,7 +64,7 @@
 }
 
 .splash-hide {
-    animation: 3s splash-hide 1.5s forwards;
+    animation: 3s splash-hide 0.75s forwards;
 }
 
 @keyframes lds-ellipsis1 {
