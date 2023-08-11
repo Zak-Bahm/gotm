@@ -3,49 +3,19 @@ import {
   Form,
   Field,
 } from 'formik';
-import { generateKeyPair, exportJWK, JWK } from 'jose';
 
 interface NewUserForm {
   name: string;
 }
 
-const KEY_ALG = 'ES384';
-
-async function createUser(values: NewUserForm) {
-    let privateJWK: JWK;
-
-    try {
-        // generate keypair
-        const { privateKey } = await generateKeyPair(KEY_ALG, {
-            extractable: true,
-        });
-
-        // get JWK representation of keys
-        privateJWK = await exportJWK(privateKey);
-    } catch (error) {
-        console.error(error);
-        return;
-    }
-
-    // add alg since it is required
-    privateJWK.alg = KEY_ALG;
-
-    // add user name
-    privateJWK.name = values.name;
-
-    // create id
-    if (!privateJWK.x || privateJWK.x === '') return;
-    const id = privateJWK.x.slice(0, 8);
-
+function createUser(values: NewUserForm) {
     // set global variables
     window.usr.name = values.name;
-    window.usr.id = id;
-    window.usr.key = privateJWK;
+    window.usr.id = (Math.random() * 10000000000000000000).toString();
 
     // persist new user data
     localStorage.setItem("user-name", window.usr.name);
     localStorage.setItem("user-id", window.usr.id);
-    localStorage.setItem("user-key", JSON.stringify(window.usr.key));
 }
 
 function NewUser({usrPresent}: {usrPresent: () => void}) {
@@ -54,9 +24,9 @@ function NewUser({usrPresent}: {usrPresent: () => void}) {
     return (
         <Formik
           initialValues={initialValues}
-          onSubmit={async (values, actions) => {
+          onSubmit={(values, actions) => {
             actions.setSubmitting(false);
-            await createUser(values);
+            createUser(values);
             usrPresent();
           }}
         >

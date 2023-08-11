@@ -11,7 +11,11 @@ function Home() {
 
     return (
         <div className="m-6 container mt-24 mx-auto">
-            <h1 className="font-extrabold text-6xl">{ header }</h1>
+            <div className="flex justify-between items-center">
+                <h1 className="font-extrabold text-6xl">{ header }</h1>
+
+                <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-base font-extrabold' onClick={window.logOut}>Log Out</button>
+            </div>
 
             <div className="row my-10 flex justify-between items-center">
                 <h3 className="font-extrabold text-2xl">Here are your upcoming events:</h3>

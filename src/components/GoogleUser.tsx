@@ -9,12 +9,10 @@ function storeGoogleUser(credentialResponse: CredentialResponse) {
     // set global variables
     window.usr.name = decodedResp.name;
     window.usr.id = decodedResp.sub;
-    window.usr.key = decodedResp;
 
     // persist new user data
     localStorage.setItem("user-name", window.usr.name);
     localStorage.setItem("user-id", window.usr.id);
-    localStorage.setItem("user-key", JSON.stringify(window.usr.key));
 }
 
 function GoogleUser({usrPresent}: {usrPresent: () => void}) {

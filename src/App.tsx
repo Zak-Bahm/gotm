@@ -1,6 +1,6 @@
 import SplashLoad from "./components/SplashLoad"
 import Register from "./views/Register"
-import { RouterProvider } from "react-router-dom";
+import { RouterProvider, redirect } from "react-router-dom";
 import router from './routes';
 import { useState, useEffect } from 'react';
 
@@ -12,8 +12,7 @@ import OAuthData from '../client_secret.json';
 // initialize global user object
 window.usr = {
     name: '',
-    id: '',
-    key: {}
+    id: ''
 }
 
 // initialize global constants
@@ -25,6 +24,18 @@ window.app = {
 // or the router if the user exists
 function Main({present, usrPresent}: {present: boolean, usrPresent: () => void}) {
     return present ? <RouterProvider router={router} /> : <Register usrPresent={usrPresent}/>;
+}
+
+function removeUser() {
+    // unset global variables
+    delete window.usr.name;
+    delete window.usr.id;
+
+    // persist new user data
+    localStorage.removeItem("user-name");
+    localStorage.removeItem("user-id");
+
+    return redirect("/");
 }
 
 function App() {
@@ -40,7 +51,6 @@ function App() {
         if (userId != null) {
             window.usr.name = localStorage.getItem("user-name") || '';
             window.usr.id = localStorage.getItem("user-id") || '';
-            window.usr.key = JSON.parse(localStorage.getItem("user-key") || '{}');
         }
 
         // determine if user is present
@@ -48,6 +58,7 @@ function App() {
 
         // set state values
         setUserPresent(isPresent);
+        window.logOut = () => { setUserPresent(false); removeUser(); }
 
         // setup ddb client
         const ddbConfig: DynamoDBClientConfig = {
