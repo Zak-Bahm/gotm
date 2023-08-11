@@ -6,6 +6,8 @@ import { useState, useEffect } from 'react';
 
 import { DynamoDBClient, DynamoDBClientConfig } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import OAuthData from '../client_secret.json';
 
 // initialize global user object
 window.usr = {
@@ -63,10 +65,12 @@ function App() {
     }, []);
 
     return (
-        <div className="App">
-            <SplashLoad loading={loading} />
-            <Main present={userPresent} usrPresent={usrPresent} />
-        </div>
+        <GoogleOAuthProvider clientId={OAuthData["web"]["client_id"]}>
+            <div className="App">
+                <SplashLoad loading={loading} />
+                <Main present={userPresent} usrPresent={usrPresent} />
+            </div>
+        </GoogleOAuthProvider>
     )
 }
 
