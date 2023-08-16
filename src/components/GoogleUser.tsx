@@ -18,11 +18,12 @@ function storeGoogleUser(credentialResponse: CredentialResponse) {
 function GoogleUser({usrPresent}: {usrPresent: () => void}) {
 
     return (
-        <div className='flex flex-col items-center justify-evenly'>
-            <h3 className="font-extrabold text-3xl mb-5">I want to make an account...</h3>
+        <div className='flex flex-col items-center justify-evenly mb-12'>
+            <h3 className="font-extrabold text-3xl mb-8">I want to use an account...</h3>
 
             <GoogleLogin
-                theme="filled_blue"
+                theme='outline'
+                size='large'
                 onSuccess={credentialResponse => {
                     storeGoogleUser(credentialResponse);
                     usrPresent();
