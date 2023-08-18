@@ -1,11 +1,13 @@
 import { formatDistanceToNow } from 'date-fns';
 import { GotmEvent } from './Event';
 import { Link } from "react-router-dom";
+import { encodeEventPath } from '../../helpers/paths';
 
 function EventListItem({event, last}: {event: GotmEvent, last: boolean}) {
     const title = event.title || 'Event';
     const desc = event.description || '';
     const endTs = event.endTs || 0;
+    const path = encodeEventPath(event.itemId) || '#';
 
     // determine formatted date string and time left
     let endDate = '';
@@ -20,7 +22,7 @@ function EventListItem({event, last}: {event: GotmEvent, last: boolean}) {
             <h3 className="font-extrabold text-5xl">
                 { title }
             </h3>
-            <Link to={ event.itemId }>
+            <Link to={ path }>
                 <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-2xl font-extrabold'>Check it Out</button>
             </Link>
         </div>
