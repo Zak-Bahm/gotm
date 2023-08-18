@@ -1,3 +1,5 @@
+const numBase = 36;
+
 function encodeEventPath(eventPath: string): string | false {
     // remove leading slash and break into its components
     eventPath.replace(/^\//g, '');
@@ -9,8 +11,8 @@ function encodeEventPath(eventPath: string): string | false {
     // encode other parts and re-assemble
     let fullPath = '';
     try {
-        const userId = parseInt(pathParts[0]).toString(36);
-        const eventId = parseInt(pathParts[2]).toString(36);
+        const userId = BigInt(pathParts[0]).toString(numBase);
+        const eventId = BigInt(pathParts[2]).toString(numBase);
 
         fullPath = `${userId}/events/${eventId}`;
     } catch (error) {
@@ -31,8 +33,8 @@ function decodeEventPath(eventPath: string): string | false {
     // decode other parts and re-assemble
     let fullPath = '';
     try {
-        const userId = parseInt(pathParts[0], 36);
-        const eventId = parseInt(pathParts[2], 36);
+        const userId = parseBigInt(pathParts[0]).toString();
+        const eventId = parseBigInt(pathParts[2]).toString();
 
         fullPath = `${userId}/events/${eventId}`;
     } catch (error) {
@@ -40,6 +42,17 @@ function decodeEventPath(eventPath: string): string | false {
     }
 
     return fullPath;
+}
+
+function parseBigInt(numberString: string, keyspace = "0123456789abcdefghijklmnopqrstuvwxyz", ) {
+    let result = 0n;
+    const keyspaceLength = BigInt(keyspace.length);
+    for (let i = 0; i < numberString.length; i++) {
+        const value = keyspace.indexOf(numberString[i]);
+        if (value === -1) throw new Error("invalid string");
+        result = result * keyspaceLength + BigInt(value);
+    }
+    return result;
 }
 
 export { encodeEventPath, decodeEventPath }

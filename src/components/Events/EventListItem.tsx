@@ -1,7 +1,7 @@
 import { formatDistanceToNow } from 'date-fns';
 import { GotmEvent } from './Event';
 import { Link } from "react-router-dom";
-import { encodeEventPath } from '../../helpers/paths';
+import { decodeEventPath, encodeEventPath } from '../../helpers/paths';
 
 function EventListItem({event, last}: {event: GotmEvent, last: boolean}) {
     const title = event.title || 'Event';

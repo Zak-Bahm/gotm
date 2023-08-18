@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, useLocation } from "react-router-dom";
 import Home from './views/Home'
 import EventPage from './views/EventPage'
 import NewEvent from './views/NewEvent'
@@ -14,10 +14,20 @@ const router = createBrowserRouter([
             {
                 path: "new",
                 element: <NewEvent />
-            },
+            }
+        ]
+    },
+    {
+        path: ":userId",
+        children: [
             {
-                path: "",
-                element: <EventPage />
+                path: "events",
+                children: [
+                    {
+                        path: ":eventId",
+                        element: <EventPage/>
+                    }
+                ]
             }
         ]
     }
