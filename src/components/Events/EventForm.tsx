@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { PutCommand, PutCommandOutput } from "@aws-sdk/lib-dynamodb";
 
 import { EventForm, GotmEvent } from './Event';
+import { encodeEventPath } from '../../helpers/paths';
 
 function convertFormToEvent(values: EventForm): GotmEvent {
     // generate key values
@@ -31,15 +32,16 @@ function convertFormToEvent(values: EventForm): GotmEvent {
     return ge;
 }
 
-async function putEvent(values: EventForm): Promise<PutCommandOutput> {
+async function putEvent(values: EventForm): Promise<GotmEvent> {
     // setup put command
+    const event: GotmEvent = convertFormToEvent(values)
     const command = new PutCommand({
         TableName: window.app.tableName,
-        Item: convertFormToEvent(values)
+        Item: event
     });
-    const response = await window.ddb.send(command);
+    await window.ddb.send(command);
 
-    return response;
+    return event;
 }
 
 function EventForm() {
@@ -52,8 +54,11 @@ function EventForm() {
           initialValues={initialValues}
           onSubmit={async (values, actions) => {
             actions.setSubmitting(false);
-            await putEvent(values);
-            navigate('/')
+            const event = await putEvent(values);
+            const encoded = encodeEventPath(event.itemId);
+            const path = encoded === false ? '/' : `/${encoded}`;
+
+            navigate(path)
           }}
         >
         {({ setFieldValue }) => (
