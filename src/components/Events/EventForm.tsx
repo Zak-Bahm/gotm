@@ -62,23 +62,27 @@ function EventForm() {
           }}
         >
         {({ setFieldValue }) => (
-          <Form className="flex flex-col font-extrabold m-5 p-10 rounded-lg shadow-dark-out">
-            <label htmlFor="title" className="font-extrabold text-3xl mb-3">What&apos;s the Event called?</label>
-            <Field id="title" type="text" name="title" className="shadow-light-in bg-gray-700 rounded-lg p-3 mb-3"/>
+          <Form className="grid gap-x-8 grid-cols-1 lg:grid-cols-2 font-extrabold m-3 p-5 lg:p-10 rounded-lg shadow-dark-out overflow-x-hidden">
+            <div className="grid grid-cols-1">
+                <label htmlFor="title" className="font-extrabold text-3xl mb-3">What&apos;s the Event called?</label>
+                <Field id="title" type="text" name="title" className="shadow-light-in bg-gray-700 rounded-lg p-3 mb-3"/>
 
-            <label htmlFor="description" className="font-extrabold text-3xl mb-3">What&apos;s it about?</label>
-            <Field id="description" component="textarea" rows="8" name="description" className="shadow-light-in bg-gray-700 rounded-lg p-3 mb-3"/>
+                <label htmlFor="description" className="font-extrabold text-3xl mb-3">What&apos;s it about?</label>
+                <Field id="description" component="textarea" rows="8" name="description" className="shadow-light-in bg-gray-700 rounded-lg p-3 mb-3"/>
+            </div>
 
-            <label htmlFor="endDate" className="font-extrabold text-3xl mb-3">When is it?</label>
-            <Field id="endDate" type="hidden" name="endDate"/>
-            <Calendar className="react-calendar-override text-xl mb-5" minDate={tomorrow} defaultValue={tomorrow} onClickDay={d => setFieldValue('endDate', d.valueOf())}/>
+            <div className="grid grid-cols-1">
+                <label htmlFor="endDate" className="font-extrabold text-3xl mb-3">When is it?</label>
+                <Field id="endDate" type="hidden" name="endDate"/>
+                <Calendar className="react-calendar-override text-xl mb-5" minDate={tomorrow} defaultValue={tomorrow} onClickDay={d => setFieldValue('endDate', d.valueOf())}/>
 
-            <label htmlFor="public" className="font-extrabold text-3xl mb-3 custom-checkbox items-baseline">
-                <Field id="public" type="checkbox" name="public"/>
-                This is a public event
-            </label>
+                <label htmlFor="public" className="font-extrabold text-3xl mb-3 custom-checkbox items-baseline">
+                    <Field id="public" type="checkbox" name="public"/>
+                    This is a public event
+                </label>
 
-            <button type="submit" className='mt-12 shadow-light-in bg-gray-700 rounded-lg p-3 text-2xl font-extrabold'>Create Event</button>
+                <button type="submit" className='mt-12 shadow-light-in bg-gray-700 rounded-lg p-3 text-2xl font-extrabold'>Create Event</button>
+            </div>
           </Form>
         )}
         </Formik>
