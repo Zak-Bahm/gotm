@@ -60,23 +60,25 @@ function EventCard({event}: {event: GotmEvent}) {
         timeLeft = formatDistanceToNow(new Date(endTs), { addSuffix: true })
     }
 
-    return <div className="shadow-dark-out rounded-lg p-7 mt-7 grid grid-flow-row auto-rows-max">
-        <div className="flex justify-between items-center">
-            <h3 className="font-extrabold text-5xl">
-                { title }
-            </h3>
-        </div>
+    return (
+        <div className="shadow-dark-out rounded-lg m-3 p-5 lg:p-10">
+            <div className="flex justify-between items-center">
+                <h3 className="font-extrabold text-5xl">
+                    { title }
+                </h3>
+            </div>
 
-        <div className="flex justify-between items-center my-3">
-            <span className="text-emerald-400 text-xl">{ timeLeft }</span>
-            <span className="font-bold text-3xl">{ endDate }</span>
-        </div>
+            <div className="flex justify-between items-center my-3">
+                <span className="text-emerald-400 text-xl">{ timeLeft }</span>
+                <span className="font-bold text-3xl">{ endDate }</span>
+            </div>
 
-        { desc.length > 0 ? <div>
-            <h5 className="font-extrabold text-xl mb-3">What&apos;s it about?</h5>
-            <p className="font-normal">{ desc }</p>
-        </div> : "" }
-    </div>
+            { desc.length > 0 ? <div className="mt-10">
+                <h5 className="font-extrabold text-xl mb-3">What&apos;s it about?</h5>
+                <p className="font-normal">{ desc }</p>
+            </div> : "" }
+        </div>
+    )
 }
 
 export { EventCard, LoadEventCard };
