@@ -35,7 +35,7 @@ function UserEvents({id}: {id: string}) {
             const future = addYears(now, 1).getTime();
             const command = new QueryCommand({
                 TableName: window.app.tableName,
-                KeyConditionExpression: 'itemType = :itemType and itemId BETWEEN :itemId1 AND :itemId2',
+                KeyConditionExpression: 'itemType = :itemType AND itemId BETWEEN :itemId1 AND :itemId2',
                 ExpressionAttributeValues: {
                     ":itemType": "event",
                     ":itemId1": `${userId}/events/${now}`,

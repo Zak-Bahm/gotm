@@ -4,6 +4,7 @@ import { LoadEventCard } from "../components/Events/EventCard"
 import { decodeEventPath } from "../helpers/paths";
 import Header from "../components/Header";
 import GiftForm from "../components/Gifts/GiftForm";
+import EventGifts from "../components/Gifts/EventGifts";
 
 function EventPage() {
     // assemble event key from route params
@@ -30,13 +31,14 @@ function EventPage() {
 
     return (
         <div className="w-screen mx-auto container grid grid-cols-1 lg:grid-cols-3 gap-x-8">
-            <animated.div style={{...eventAnim}} className="col-span-1 mt-7 grid">
+            <animated.div style={{...eventAnim}} className="col-span-1 mt-7">
                 <LoadEventCard eventId={eventKey} />
             </animated.div>
 
-            <animated.div style={{...giftAnim}} className="col-span-2 mt-7 grid gap-y-4">
+            <animated.div style={{...giftAnim}} className="col-span-2 mt-7 flex flex-col gap-y-4">
                 <Header title="Gifts" />
                 <GiftForm eventId={eventKey}/>
+                <EventGifts eventId={eventKey}/>
             </animated.div>
         </div>
     )

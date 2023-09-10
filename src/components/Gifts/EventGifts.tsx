@@ -3,7 +3,6 @@ import SimpleLoad from '../SimpleLoad';
 
 import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 import GiftListItem from './GiftListItem';
-import { GotmEvent } from '../Events/Event';
 import { Gift } from './Gift';
 
 // for the events component, show the loading symbol if still loading,
@@ -19,21 +18,18 @@ function Gifts({loading, gifts}: {loading: boolean, gifts: Gift[] }) {
     </ul>;
 }
 
-function EventGifts({event}: {event: GotmEvent}) {
+function EventGifts({eventId}: {eventId: string}) {
     const [loading, setLoading] = useState(true);
     const [gifts, setGifts] = useState([]);
 
 
     // load event gifts after first render
     useEffect(() => {
-        // set event id
-        const eventId = event.itemId;
-
         // get gifts from dynamodb
         const getGifts = async () => {
             const command = new QueryCommand({
                 TableName: window.app.tableName,
-                KeyConditionExpression: 'itemType = :itemType and itemId BEGINS_WITH :itemId',
+                KeyConditionExpression: 'itemType = :itemType AND begins_with(itemId, :itemId)',
                 ExpressionAttributeValues: {
                     ":itemType": "gift",
                     ":itemId": `${eventId}/gifts/`

@@ -4,7 +4,7 @@ function GiftListItem({gift, last}: {gift: Gift, last: boolean}) {
     const title = gift.title || 'Gift';
     const desc = gift.description || '';
 
-    return <li className="shadow-dark-out rounded-lg p-7 mt-7">
+    return <li className="shadow-dark-out rounded-lg p-7 m-3">
         <h3 className="font-extrabold text-5xl">
             { title }
         </h3>
