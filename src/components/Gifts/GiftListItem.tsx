@@ -1,6 +1,6 @@
 import { Gift } from './Gift';
 
-function GiftListItem({gift, last}: {gift: Gift, last: boolean}) {
+function GiftListItem({gift}: {gift: Gift}) {
     const title = gift.title || 'Gift';
     const desc = gift.description || '';
 

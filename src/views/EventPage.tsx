@@ -5,12 +5,18 @@ import { decodeEventPath } from "../helpers/paths";
 import Header from "../components/Header";
 import GiftForm from "../components/Gifts/GiftForm";
 import EventGifts from "../components/Gifts/EventGifts";
+import { useState } from "react";
+import { Gift } from "../components/Gifts/Gift";
 
 function EventPage() {
     // assemble event key from route params
     const { userId, eventId } = useParams();
     const eventPath = `${userId}/events/${eventId}`;
-    const eventKey = decodeEventPath(eventPath)
+    const eventKey = decodeEventPath(eventPath);
+    const initQueue: Gift[] = [];
+    const [giftQueue, setGiftQueue] = useState(initQueue);
+
+    const addGift = (g: Gift) => setGiftQueue([...giftQueue, g])
 
     const eventAnim = useSpring({
         from: { y: '300%' },
@@ -31,14 +37,14 @@ function EventPage() {
 
     return (
         <div className="w-screen mx-auto container grid grid-cols-1 lg:grid-cols-3 gap-x-8">
-            <animated.div style={{...eventAnim}} className="col-span-1 mt-7">
+            <animated.div style={{...eventAnim}} className="lg:col-span-1 mt-7">
                 <LoadEventCard eventId={eventKey} />
             </animated.div>
 
-            <animated.div style={{...giftAnim}} className="col-span-2 mt-7 flex flex-col gap-y-4">
+            <animated.div style={{...giftAnim}} className="lg:col-span-2 mt-7 flex flex-col gap-y-4">
                 <Header title="Gifts" />
-                <GiftForm eventId={eventKey}/>
-                <EventGifts eventId={eventKey}/>
+                <GiftForm eventId={eventKey} newGift={addGift}/>
+                <EventGifts eventId={eventKey} giftQueue={giftQueue} setQueue={setGiftQueue}/>
             </animated.div>
         </div>
     )
