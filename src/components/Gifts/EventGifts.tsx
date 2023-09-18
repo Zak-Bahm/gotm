@@ -4,16 +4,19 @@ import SimpleLoad from '../SimpleLoad';
 import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 import GiftListItem from './GiftListItem';
 import { Gift } from './Gift';
+import { checkOwnerShip } from '../../helpers/paths';
 
 // for the events component, show the loading symbol if still loading,
 // otherwise a list of events
 function Gifts({loading, gifts}: {loading: boolean, gifts: Gift[]}) {
     if (loading) return <SimpleLoad />;
-    if (gifts.length === 0) return <p>No gifts found</p>;
+    if (gifts.length === 0) return <p className="m-3">No gifts found</p>;
+
+    const isOwner = checkOwnerShip();
 
     return <ul className='list-none'>
         {gifts.map((g, i) => {
-            return <GiftListItem key={i} gift={g} />
+            return <GiftListItem gift={g} key={i} isOwner={isOwner} />
         })}
     </ul>;
 }
@@ -22,7 +25,6 @@ function EventGifts({eventId, giftQueue, setQueue}: {eventId: string, giftQueue:
     const [loading, setLoading] = useState(true);
     const initGifts: Gift[] = [];
     const [gifts, setGifts] = useState(initGifts);
-
 
     // load event gifts after first render
     useEffect(() => {

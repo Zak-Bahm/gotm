@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useSpring, animated } from '@react-spring/web'
 import { LoadEventCard } from "../components/Events/EventCard"
-import { decodeEventPath } from "../helpers/paths";
+import { checkOwnerShip, decodeEventPath } from "../helpers/paths";
 import Header from "../components/Header";
 import GiftForm from "../components/Gifts/GiftForm";
 import EventGifts from "../components/Gifts/EventGifts";
@@ -16,7 +16,10 @@ function EventPage() {
     const initQueue: Gift[] = [];
     const [giftQueue, setGiftQueue] = useState(initQueue);
 
-    const addGift = (g: Gift) => setGiftQueue([...giftQueue, g])
+    const addGift = (g: Gift) => setGiftQueue([...giftQueue, g]);
+
+    // check if current viewer is the owner
+    const isOwner = checkOwnerShip();
 
     const eventAnim = useSpring({
         from: { y: '300%' },
@@ -43,7 +46,7 @@ function EventPage() {
 
             <animated.div style={{...giftAnim}} className="lg:col-span-2 mt-7 flex flex-col gap-y-4">
                 <Header title="Gifts" />
-                <GiftForm eventId={eventKey} newGift={addGift}/>
+                { isOwner ? <GiftForm eventId={eventKey} newGift={addGift}/> : '' }
                 <EventGifts eventId={eventKey} giftQueue={giftQueue} setQueue={setGiftQueue}/>
             </animated.div>
         </div>
