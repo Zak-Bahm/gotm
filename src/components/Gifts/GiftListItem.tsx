@@ -7,8 +7,8 @@ async function reserveGift(gift: Gift, reserved: boolean): Promise<Gift> {
     gift.giverName = '';
     gift.giverId = '';
     if (reserved) {
-        gift.giverName = gift.giverName ?? '';
-        gift.giverId = gift.giverId ?? '';
+        gift.giverName = window.usr.name ?? '';
+        gift.giverId = window.usr.id ?? '';
     }
 
     const command = new PutCommand({
@@ -47,8 +47,8 @@ function GiftListItem({gift, isOwner}: {gift: Gift, isOwner: boolean}) {
                     { gift.giverName} has reserved this gift
                 </p>
                 :
-                <label htmlFor="reserved" className="font-extrabold text-2xl pt-6 px-4 custom-checkbox items-baseline cursor-pointer">
-                    <input id="reserved" type="checkbox" name="reserved" onChange={handleCheckboxChange} checked={reserved} />
+                <label htmlFor={`reserved-${gift.createdTs}`} className="font-extrabold text-2xl pt-6 px-4 custom-checkbox items-baseline cursor-pointer">
+                    <input id={`reserved-${gift.createdTs}`} type="checkbox" name={`reserved-${gift.createdTs}`} onChange={handleCheckboxChange} checked={reserved} />
                     Reserve this gift
                 </label>
             )
