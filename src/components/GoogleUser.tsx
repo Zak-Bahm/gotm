@@ -7,8 +7,8 @@ function storeGoogleUser(credentialResponse: CredentialResponse) {
     const decodedResp = decodeJwt(jwt)
 
     // set global variables
-    window.usr.name = decodedResp.name;
-    window.usr.id = decodedResp.sub;
+    window.usr.name = decodedResp.name as string;
+    window.usr.id = decodedResp.sub as string;
 
     // persist new user data
     localStorage.setItem("user-name", window.usr.name);

@@ -27,7 +27,7 @@ function UserEvents({id}: {id: string}) {
     // load user events after first render
     useEffect(() => {
         // get events from dynamo db
-        const userId: string = id || window.usr.id;
+        const userId: string = id || window.usr.id || '';
 
         // get events
         const getEvents = async () => {

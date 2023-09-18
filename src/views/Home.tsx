@@ -24,7 +24,7 @@ function Home() {
                 </Link>
             </div>
 
-            <UserEvents id={window.usr.id} />
+            <UserEvents id={window.usr.id ?? ''} />
         </div>
     )
 }

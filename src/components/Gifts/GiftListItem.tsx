@@ -4,8 +4,12 @@ import { Gift } from './Gift';
 
 async function reserveGift(gift: Gift, reserved: boolean): Promise<Gift> {
     // set giver info
-    gift.giverName = reserved ? window.usr?.name : '';
-    gift.giverId = reserved ? window.usr?.id : '';
+    gift.giverName = '';
+    gift.giverId = '';
+    if (reserved) {
+        gift.giverName = gift.giverName ?? '';
+        gift.giverId = gift.giverId ?? '';
+    }
 
     const command = new PutCommand({
         TableName: window.app.tableName,

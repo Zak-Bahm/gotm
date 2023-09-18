@@ -54,7 +54,9 @@ function App() {
         }
 
         // determine if user is present
-        const isPresent = window.usr.name.length > 0 && window.usr.id.length > 0;
+        const namePresent = window.usr.name !== undefined && window.usr.name.length > 0;
+        const idPresent = window.usr.id !== undefined && window.usr.id.length > 0;
+        const isPresent =  namePresent && idPresent;
 
         // set state values
         setUserPresent(isPresent);

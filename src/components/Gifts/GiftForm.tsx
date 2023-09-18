@@ -63,7 +63,7 @@ function GiftForm({eventId, newGift}: {eventId: string, newGift: (g: Gift) => vo
         }
     });
 
-    const toggleForm = (resetForm) => {
+    const toggleForm = (resetForm: () => void) => {
         const newOpen = !isOpen;
         setOpen(newOpen);
 
