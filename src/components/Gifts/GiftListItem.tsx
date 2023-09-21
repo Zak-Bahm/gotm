@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useSpring, animated } from '@react-spring/web';
 import { PutCommand, DeleteCommand, DeleteCommandOutput } from "@aws-sdk/lib-dynamodb";
 import { Gift } from './Gift';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLink, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 function giftAction(gift: Gift, isOwner: boolean, hideGift: () => void) {
     // if owner return delete button early
@@ -10,7 +12,8 @@ function giftAction(gift: Gift, isOwner: boolean, hideGift: () => void) {
             <button onClick={async () => {
                 const removed = await removeGift(gift);
                 if (removed) hideGift();
-            } } className='mt-6 shadow-light-in bg-gray-700 rounded-lg p-3 text-2xl font-extrabold'>
+            } } className='mt-6 shadow-light-in bg-gray-700 rounded-lg p-3 text-base font-extrabold'>
+                <FontAwesomeIcon icon={faTrash} className='me-1' />
                 Remove Gift
             </button>
         </span>
@@ -98,16 +101,17 @@ function GiftListItem({gift, isOwner}: {gift: Gift, isOwner: boolean}) {
     });
 
     return <animated.li style={{...hide}} className="shadow-dark-out rounded-lg p-7 m-3 grid grid-cols-1 justify-start">
-            <div className="flex justify-between items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 justify-between items-center">
                 <p className="font-extrabold text-2xl grow">
                     { title }
                 </p>
-                <p className="text-xl">
+                <p className="text-xl my-3 lg:m-0">
                     { store || url ? 'Find it at ' : ''}
                     {
                         url ?
                         <a href={ url } target='_blank' className='font-extrabold'>
                             { store || url }
+                            <FontAwesomeIcon icon={faLink} className='ms-1' />
                         </a>
                         :
                         <span className='font-extrabold'>

@@ -2,6 +2,8 @@ import { formatDistanceToNow } from 'date-fns';
 import { GotmEvent } from './Event';
 import { Link } from "react-router-dom";
 import { decodeEventPath, encodeEventPath } from '../../helpers/paths';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCalendarDay } from '@fortawesome/free-solid-svg-icons';
 
 function EventListItem({event, last}: {event: GotmEvent, last: boolean}) {
     const title = event.title || 'Event';
@@ -23,7 +25,10 @@ function EventListItem({event, last}: {event: GotmEvent, last: boolean}) {
                 { title }
             </h3>
             <Link to={ path } className="grid lg:justify-items-end">
-                <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-2xl font-extrabold'>Check it Out</button>
+                <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-xl font-extrabold'>
+                    <FontAwesomeIcon icon={faCalendarDay} className="me-1" />
+                    View Event
+                </button>
             </Link>
         </div>
 
