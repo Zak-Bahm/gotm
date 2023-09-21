@@ -10,16 +10,18 @@ function Home() {
     const header = greetings[Math.floor(Math.random()*greetings.length)] + window.usr.name;
 
     return (
-        <div className="m-6 container mt-24 mx-auto">
-            <div className="flex justify-between items-center">
-                <h1 className="font-extrabold text-6xl">{ header }</h1>
+        <div className="m-6 container lg:mt-24 mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 justify-between items-center m-1">
+                <h1 className="font-extrabold text-5xl lg:text-6xl">{ header }</h1>
 
-                <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-base font-extrabold' onClick={window.logOut}>Log Out</button>
+                <span className="m-3 lg:m-1 grid justify-items-end">
+                    <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-base font-extrabold' onClick={window.logOut}>Log Out</button>
+                </span>
             </div>
 
-            <div className="row my-10 flex justify-between items-center">
-                <h3 className="font-extrabold text-2xl">Here are your upcoming events:</h3>
-                <Link to="/event/new">
+            <div className="row my-10 grid grid-cols-1 lg:grid-cols-2 justify-between items-center m-1">
+                <h3 className="font-extrabold text-2xl pb-3 lg:pb-0">Here are your upcoming events:</h3>
+                <Link to="/event/new" className="grid lg:justify-items-end">
                     <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-2xl font-extrabold'>Make an Event</button>
                 </Link>
             </div>

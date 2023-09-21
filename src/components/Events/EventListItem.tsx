@@ -18,11 +18,11 @@ function EventListItem({event, last}: {event: GotmEvent, last: boolean}) {
     }
 
     return <li className="shadow-dark-out rounded-lg p-7 mt-7 grid grid-flow-row auto-rows-max">
-        <div className="flex justify-between items-center">
-            <h3 className="font-extrabold text-5xl">
+        <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
+            <h3 className="font-extrabold text-5xl mb-3">
                 { title }
             </h3>
-            <Link to={ path }>
+            <Link to={ path } className="grid lg:justify-items-end">
                 <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-2xl font-extrabold'>Check it Out</button>
             </Link>
         </div>
