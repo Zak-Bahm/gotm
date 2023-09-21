@@ -1,6 +1,60 @@
 import { useState } from 'react';
-import { PutCommand, PutCommandOutput } from "@aws-sdk/lib-dynamodb";
+import { useSpring, animated } from '@react-spring/web';
+import { PutCommand, DeleteCommand, DeleteCommandOutput } from "@aws-sdk/lib-dynamodb";
 import { Gift } from './Gift';
+
+function giftAction(gift: Gift, isOwner: boolean, hideGift: () => void) {
+    // if owner return delete button early
+    if (isOwner) {
+        return <button onClick={async () => {
+            const removed = await removeGift(gift);
+            if (removed) hideGift();
+        } } className='mt-6 shadow-light-in bg-gray-700 rounded-lg p-3 text-2xl font-extrabold'>
+            Remove Gift
+        </button>
+    }
+
+    // setup reserved state
+    const [reserved, setReserved] = useState(gift.giverId !== '');
+    const handleCheckboxChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const isChecked = event.target.checked;
+        setReserved(isChecked);
+
+        gift = await reserveGift(gift, isChecked);
+    };
+
+    // check if it is reserved by someone else
+    const otherReserved = (gift.giverId !== '' && gift.giverId !== window.usr?.id);
+
+    if (otherReserved) {
+        return <p className="font-extrabold text-2xl pt-6 px-4">
+            { gift.giverName} has reserved this gift
+        </p>
+    }
+
+    return <label htmlFor={`reserved-${gift.createdTs}`} className="font-extrabold text-2xl pt-6 px-4 custom-checkbox items-baseline cursor-pointer">
+        <input id={`reserved-${gift.createdTs}`} type="checkbox" name={`reserved-${gift.createdTs}`} onChange={handleCheckboxChange} checked={reserved} />
+        Reserve this gift
+    </label>
+}
+
+async function removeGift(gift: Gift): Promise<boolean> {
+    // ensure item id is present
+    if (gift.itemId === undefined) return false;
+
+    // send delete command and parse response
+    const command = new DeleteCommand({
+        TableName: window.app.tableName,
+        Key: {
+            itemType: 'gift',
+            itemId: gift.itemId
+        }
+    });
+    const resp: DeleteCommandOutput = await window.ddb.send(command);
+    const success = resp.$metadata.httpStatusCode === 200;
+
+    return success
+}
 
 async function reserveGift(gift: Gift, reserved: boolean): Promise<Gift> {
     // set giver info
@@ -24,36 +78,26 @@ function GiftListItem({gift, isOwner}: {gift: Gift, isOwner: boolean}) {
     const title = gift.title || 'Gift';
     const desc = gift.description || '';
 
-    // setup reserved state
-    const [reserved, setReserved] = useState(gift.giverId !== '');
-    const handleCheckboxChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const isChecked = event.target.checked;
-        setReserved(isChecked);
+    // setup gift hide action for deletion
+    const [hidden, setHidden] = useState(false);
+    const hideRemovedGift = () => { setHidden(true) };
+    const hide = useSpring({
+        to: {
+            opacity: hidden ? 0 : 1,
+            height: hidden ? 0 : 'auto',
+            y: hidden ? -20 : 0,
+            padding: hidden ? '0rem' : '1.75rem',
+            margin: hidden ? '0rem' : '0.75rem'
+        }
+    });
 
-        gift = await reserveGift(gift, isChecked);
-    };
-
-    // check if it is reserved by someone else
-    const otherReserved = (gift.giverId !== '' && gift.giverId !== window.usr?.id);
-
-    return <li className="shadow-dark-out rounded-lg p-7 m-3 grid justify-items-start">
+    return <animated.li style={{...hide}} className="shadow-dark-out rounded-lg p-7 m-3 grid justify-items-start">
             <p className="font-extrabold text-2xl">
                 { title }
             </p>
             <p className="font-thin">{ desc }</p>
-            { !isOwner && (
-                otherReserved ?
-                <p className="font-extrabold text-2xl pt-6 px-4">
-                    { gift.giverName} has reserved this gift
-                </p>
-                :
-                <label htmlFor={`reserved-${gift.createdTs}`} className="font-extrabold text-2xl pt-6 px-4 custom-checkbox items-baseline cursor-pointer">
-                    <input id={`reserved-${gift.createdTs}`} type="checkbox" name={`reserved-${gift.createdTs}`} onChange={handleCheckboxChange} checked={reserved} />
-                    Reserve this gift
-                </label>
-            )
-            }
-    </li>
+            { giftAction(gift, isOwner, hideRemovedGift) }
+    </animated.li>
 }
 
 export default GiftListItem;
