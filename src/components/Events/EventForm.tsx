@@ -47,7 +47,7 @@ async function putEvent(values: EventForm): Promise<GotmEvent> {
 function EventForm() {
     const navigate = useNavigate();
     const tomorrow = new Date(Date.now() + 1 * 24 * 60 * 60 * 1000);
-    const initialValues: EventForm = { title: '', description: '', endDate: tomorrow.valueOf(), public: false };
+    const initialValues: EventForm = { title: '', description: '', endDate: tomorrow.valueOf(), public: true };
 
     return (
         <Formik
@@ -76,10 +76,10 @@ function EventForm() {
                 <Field id="endDate" type="hidden" name="endDate"/>
                 <Calendar className="react-calendar-override text-xl mb-5" minDate={tomorrow} defaultValue={tomorrow} onClickDay={d => setFieldValue('endDate', d.valueOf())}/>
 
-                <label htmlFor="public" className="font-extrabold text-3xl mb-3 custom-checkbox items-baseline">
+                {/* <label htmlFor="public" className="font-extrabold text-3xl mb-3 custom-checkbox items-baseline">
                     <Field id="public" type="checkbox" name="public"/>
                     This is a public event
-                </label>
+                </label> */}
 
                 <button type="submit" className='mt-12 shadow-light-in bg-gray-700 rounded-lg p-3 text-2xl font-extrabold'>Create Event</button>
             </div>

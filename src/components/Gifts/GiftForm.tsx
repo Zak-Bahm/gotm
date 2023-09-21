@@ -101,8 +101,8 @@ function GiftForm({eventId, newGift}: {eventId: string, newGift: (g: Gift) => vo
                 <label htmlFor="url" className="font-extrabold text-3xl mb-3">What&apos;s the link for it?</label>
                 <Field id="url" type="text" name="url" className="shadow-light-in bg-gray-700 rounded-lg p-3 mb-3"/>
 
-                <label htmlFor="cost" className="font-extrabold text-3xl mb-3">How much does it cost?</label>
-                <Field id="cost" type="number" name="cost"  min="0" step="any" className="shadow-light-in bg-gray-700 rounded-lg p-3 mb-3"/>
+                {/* <label htmlFor="cost" className="font-extrabold text-3xl mb-3">How much does it cost?</label>
+                <Field id="cost" type="number" name="cost"  min="0" step="any" className="shadow-light-in bg-gray-700 rounded-lg p-3 mb-3"/> */}
 
                 <button type="submit" className='mt-12 shadow-light-in bg-gray-700 rounded-lg p-3 text-2xl font-extrabold'>Add Gift</button>
             </animated.div>

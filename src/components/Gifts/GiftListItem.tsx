@@ -6,12 +6,14 @@ import { Gift } from './Gift';
 function giftAction(gift: Gift, isOwner: boolean, hideGift: () => void) {
     // if owner return delete button early
     if (isOwner) {
-        return <button onClick={async () => {
-            const removed = await removeGift(gift);
-            if (removed) hideGift();
-        } } className='mt-6 shadow-light-in bg-gray-700 rounded-lg p-3 text-2xl font-extrabold'>
-            Remove Gift
-        </button>
+        return <span>
+            <button onClick={async () => {
+                const removed = await removeGift(gift);
+                if (removed) hideGift();
+            } } className='mt-6 shadow-light-in bg-gray-700 rounded-lg p-3 text-2xl font-extrabold'>
+                Remove Gift
+            </button>
+        </span>
     }
 
     // setup reserved state
@@ -32,10 +34,12 @@ function giftAction(gift: Gift, isOwner: boolean, hideGift: () => void) {
         </p>
     }
 
-    return <label htmlFor={`reserved-${gift.createdTs}`} className="font-extrabold text-2xl pt-6 px-4 custom-checkbox items-baseline cursor-pointer">
-        <input id={`reserved-${gift.createdTs}`} type="checkbox" name={`reserved-${gift.createdTs}`} onChange={handleCheckboxChange} checked={reserved} />
-        Reserve this gift
-    </label>
+    return <span className="flex">
+        <label htmlFor={`reserved-${gift.createdTs}`} className="font-extrabold text-2xl pt-6 px-4 custom-checkbox items-baseline cursor-pointer">
+            <input id={`reserved-${gift.createdTs}`} type="checkbox" name={`reserved-${gift.createdTs}`} onChange={handleCheckboxChange} checked={reserved} />
+            Reserve this gift
+        </label>
+    </span>
 }
 
 async function removeGift(gift: Gift): Promise<boolean> {
@@ -77,6 +81,8 @@ async function reserveGift(gift: Gift, reserved: boolean): Promise<Gift> {
 function GiftListItem({gift, isOwner}: {gift: Gift, isOwner: boolean}) {
     const title = gift.title || 'Gift';
     const desc = gift.description || '';
+    const store = gift.store || '';
+    const url = gift.url || false;
 
     // setup gift hide action for deletion
     const [hidden, setHidden] = useState(false);
@@ -91,10 +97,25 @@ function GiftListItem({gift, isOwner}: {gift: Gift, isOwner: boolean}) {
         }
     });
 
-    return <animated.li style={{...hide}} className="shadow-dark-out rounded-lg p-7 m-3 grid justify-items-start">
-            <p className="font-extrabold text-2xl">
-                { title }
-            </p>
+    return <animated.li style={{...hide}} className="shadow-dark-out rounded-lg p-7 m-3 grid grid-cols-1 justify-start">
+            <div className="flex justify-between items-center">
+                <p className="font-extrabold text-2xl grow">
+                    { title }
+                </p>
+                <p className="text-xl">
+                    { store || url ? 'Find it at ' : ''}
+                    {
+                        url ?
+                        <a href={ url } target='_blank' className='font-extrabold'>
+                            { store || url }
+                        </a>
+                        :
+                        <span className='font-extrabold'>
+                            { store }
+                        </span>
+                    }
+                </p>
+            </div>
             <p className="font-thin">{ desc }</p>
             { giftAction(gift, isOwner, hideRemovedGift) }
     </animated.li>
