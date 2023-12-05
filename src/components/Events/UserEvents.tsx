@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import SimpleLoad from '../SimpleLoad';
 
 import { QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { addYears } from 'date-fns';
+import { addYears, setYear, getYear } from 'date-fns';
 import EventListItem from './EventListItem';
 import { GotmEvent } from './Event';
 
@@ -19,7 +19,7 @@ function Events({loading, events}: {loading: boolean, events: GotmEvent[] }) {
     </ul>;
 }
 
-function UserEvents({id}: {id: string}) {
+function UserEvents({id, past}: {id: string, past: boolean}) {
     const [loading, setLoading] = useState(true);
     const [events, setEvents] = useState([]);
 
@@ -31,15 +31,22 @@ function UserEvents({id}: {id: string}) {
 
         // get events
         const getEvents = async () => {
-            const now = Date.now();
-            const future = addYears(now, 1).getTime();
+            let start = Date.now();
+            let end = addYears(start, 1).getTime();
+
+            // get past year if past
+            if (past) {
+                end = Date.now();
+                start = setYear(end, getYear(end) - 1).getTime();
+            }
+
             const command = new QueryCommand({
                 TableName: window.app.tableName,
                 KeyConditionExpression: 'itemType = :itemType AND itemId BETWEEN :itemId1 AND :itemId2',
                 ExpressionAttributeValues: {
                     ":itemType": "event",
-                    ":itemId1": `${userId}/events/${now}`,
-                    ":itemId2": `${userId}/events/${future}`
+                    ":itemId1": `${userId}/events/${start}`,
+                    ":itemId2": `${userId}/events/${end}`
                 }
             });
 

@@ -1,7 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserEvents from "../components/Events/UserEvents"
 import { Link } from "react-router-dom";
-import { faCalendarPlus } from "@fortawesome/free-solid-svg-icons";
+import { useSpring, animated } from '@react-spring/web';
+import { faCalendarPlus, faCircleMinus, faCirclePlus } from "@fortawesome/free-solid-svg-icons";
+
+import { useState } from 'react';
 
 function Home() {
     const greetings = [
@@ -10,6 +13,24 @@ function Home() {
         "How's it going "
     ];
     const header = greetings[Math.floor(Math.random()*greetings.length)] + window.usr.name;
+
+    const [isOpen, setOpen] = useState(false);
+
+    const reveal = useSpring({
+        from: { opacity: 0, height: 0, y: 0 , marginTop: 0},
+        to: {
+            opacity: isOpen ? 1 : 0,
+            height: isOpen ? 'auto' : 0,
+            y: isOpen ? 20 : 0
+        }
+    });
+
+
+
+    const togglePastEvents = () => {
+        const newOpen = !isOpen;
+        setOpen(newOpen);
+    }
 
     return (
         <div className="m-6 container lg:mt-24 mx-auto">
@@ -21,6 +42,20 @@ function Home() {
                 </span>
             </div>
 
+            <div className="row my-10 grid grid-cols-1 lg:grid-cols-2 justify-between items-center m-1 mb-0">
+                <h3 className="font-extrabold text-2xl pb-3 lg:pb-0">Click here to view your previous events:</h3>
+                <div className="grid lg:justify-items-end">
+                    <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-xl font-extrabold' onClick={() => togglePastEvents()}>
+                        <FontAwesomeIcon icon={isOpen ? faCircleMinus : faCirclePlus} className="me-1" />
+                        {isOpen ? "Hide" : "Show"} Events
+                    </button>
+                </div>
+            </div>
+
+            <animated.div style={{...reveal}} className="grid mb-1">
+                <UserEvents id={window.usr.id ?? ''} past={true}/>
+            </animated.div>
+
             <div className="row my-10 grid grid-cols-1 lg:grid-cols-2 justify-between items-center m-1">
                 <h3 className="font-extrabold text-2xl pb-3 lg:pb-0">Here are your upcoming events:</h3>
                 <Link to="/event/new" className="grid lg:justify-items-end">
@@ -31,7 +66,7 @@ function Home() {
                 </Link>
             </div>
 
-            <UserEvents id={window.usr.id ?? ''} />
+            <UserEvents id={window.usr.id ?? ''} past={false}/>
         </div>
     )
 }
