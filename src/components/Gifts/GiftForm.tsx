@@ -10,8 +10,12 @@ import { faCircleMinus, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 
 import { GiftForm, Gift } from './Gift';
 import { useState } from 'react';
+import { checkOwnerShip, encodeEventPath } from "../../helpers/paths";
 
 function convertFormToGift(values: GiftForm, eventId: string): Gift {
+    // check if current viewer is the owner
+    const isOwner = checkOwnerShip(encodeEventPath(eventId) || "");
+
     // generate key values
     const createdTs = Date.now();
     const itemId = `${eventId}/gifts/${createdTs}`;
@@ -19,13 +23,14 @@ function convertFormToGift(values: GiftForm, eventId: string): Gift {
         itemType: "gift",
         itemId: itemId,
         createdTs: createdTs,
+        creatorId: window.usr?.id || "",
         title: values.title,
         description: values.description,
         store: values.store,
         url: values.url,
         cost: values.cost,
-        giverName: "",
-        giverId: ""
+        giverName: isOwner ? "" : window.usr?.name || "",
+        giverId: isOwner ? "" : window.usr?.id || ""
     }
 
     return gift;

@@ -43,7 +43,7 @@ function Home() {
             </div>
 
             <div className="row my-10 grid grid-cols-1 lg:grid-cols-2 justify-between items-center m-1 mb-0">
-                <h3 className="font-extrabold text-2xl pb-3 lg:pb-0">Click here to view your previous events:</h3>
+                <h3 className="font-extrabold text-2xl pb-3 lg:pb-0">View your previous events:</h3>
                 <div className="grid lg:justify-items-end">
                     <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-xl font-extrabold' onClick={() => togglePastEvents()}>
                         <FontAwesomeIcon icon={isOpen ? faCircleMinus : faCirclePlus} className="me-1" />

@@ -12,11 +12,18 @@ function Gifts({loading, gifts}: {loading: boolean, gifts: Gift[]}) {
     if (loading) return <SimpleLoad />;
     if (gifts.length === 0) return <p className="m-3">No gifts found</p>;
 
-    const isOwner = checkOwnerShip();
+    // if owner is viewing, filter out any gifts added by guests and not the owner
+    const listOwnership = checkOwnerShip();
+    if (listOwnership) {
+        gifts = gifts.filter(g => {
+            console.log(g.creatorId)
+            return typeof g.creatorId === "undefined" || g.creatorId === window.usr?.id
+        })
+    }
 
     return <ul className='list-none'>
         {gifts.map((g, i) => {
-            return <GiftListItem gift={g} key={i} isOwner={isOwner} />
+            return <GiftListItem gift={g} key={i} isOwner={g.creatorId == window.usr.id || listOwnership} />
         })}
     </ul>;
 }

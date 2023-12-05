@@ -10,6 +10,7 @@ export interface Gift {
     itemType: "gift";
     itemId: string; // usr.id/events/endTs/gifts/createdTs
     createdTs: number;
+    creatorId: string;
     title: string;
     description: string;
     store: string;

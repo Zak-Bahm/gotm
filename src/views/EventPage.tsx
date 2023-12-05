@@ -18,9 +18,6 @@ function EventPage() {
 
     const addGift = (g: Gift) => setGiftQueue([...giftQueue, g]);
 
-    // check if current viewer is the owner
-    const isOwner = checkOwnerShip();
-
     const eventAnim = useSpring({
         from: { y: '300%' },
         to: { y: '0%' },
@@ -46,7 +43,7 @@ function EventPage() {
 
             <animated.div style={{...giftAnim}} className="lg:col-span-2 mt-7 flex flex-col gap-y-4">
                 <Header title="Gifts" />
-                { isOwner ? <GiftForm eventId={eventKey} newGift={addGift}/> : '' }
+                <GiftForm eventId={eventKey} newGift={addGift}/>
                 <EventGifts eventId={eventKey} giftQueue={giftQueue} setQueue={setGiftQueue}/>
             </animated.div>
         </div>
