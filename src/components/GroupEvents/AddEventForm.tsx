@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { GotmEvent } from '../Events/Event';
 import { GroupEvent } from './GroupEvent';
 
-async function putEvent(event: GotmEvent, groupId: string): Promise<any[]> {
+async function putEvent(event: GotmEvent | false, groupId: string): Promise<any[]> {
     // get current group event
     const getGroup = new GetCommand({
         TableName: window.app.tableName,
@@ -22,7 +22,7 @@ async function putEvent(event: GotmEvent, groupId: string): Promise<any[]> {
     const groupData = await window.ddb.send(getGroup);
 
     // check if we need to update
-    if (typeof groupData.Item == 'undefined' || groupData.Item.events.includes(event.itemId)) {
+    if (typeof groupData.Item == 'undefined' || (event !== false && groupData.Item.events.includes(event.itemId))) {
         return []
     }
 
@@ -38,7 +38,7 @@ async function putEvent(event: GotmEvent, groupId: string): Promise<any[]> {
 
         return userOwned === false
     });
-    newEvents.push(event.itemId);
+    if (event !== false) newEvents.push(event.itemId);
 
     // Create promises for async requests
     const requests: Promise<any>[] = [];
@@ -75,19 +75,21 @@ async function putEvent(event: GotmEvent, groupId: string): Promise<any[]> {
         requests.push(window.ddb.send(unlinkEvent))
     }
 
-    // then add the update for the event itself
-    const updateEvent = new UpdateCommand({
-        TableName: window.app.tableName,
-        Key: {
-            itemType: "event",
-            itemId: event.itemId,
-        },
-        UpdateExpression: "set groupEventId = :groupId",
-        ExpressionAttributeValues: {
-            ":groupId": group.itemId,
-        },
-    });
-    requests.push(window.ddb.send(updateEvent))
+    // then add the update for the event itself if we are replacing
+    if (event !== false) {
+        const updateEvent = new UpdateCommand({
+            TableName: window.app.tableName,
+            Key: {
+                itemType: "event",
+                itemId: event.itemId,
+            },
+            UpdateExpression: "set groupEventId = :groupId",
+            ExpressionAttributeValues: {
+                ":groupId": group.itemId,
+            },
+        });
+        requests.push(window.ddb.send(updateEvent))
+    }
 
     return Promise.all(requests);
 }
@@ -159,4 +161,4 @@ function AddEventForm({groupId, setEvent}: {groupId: string, setEvent: (e: GotmE
     )
 }
 
-export default AddEventForm;
+export { AddEventForm, putEvent };

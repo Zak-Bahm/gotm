@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from "@fortawesome/free-solid-svg-icons";
 import IncludedEvents from "../components/GroupEvents/IncludedEvents";
 import { LoadGroupEventListItem } from "../components/GroupEvents/GroupEventListItem";
-import AddEventForm from "../components/GroupEvents/AddEventForm";
+import { AddEventForm } from "../components/GroupEvents/AddEventForm";
 
 function GroupEventPage() {
     // assemble event key from route params
