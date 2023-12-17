@@ -1,4 +1,4 @@
-export interface EventForm {
+export interface EventFormType {
     title: string;
     description: string;
     endDate: number;

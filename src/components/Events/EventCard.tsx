@@ -49,6 +49,7 @@ function LoadEventCard({eventId}: {eventId: string}) {
 
 function EventCard({event}: {event: GotmEvent}) {
     const title = event.title || 'Event';
+    const name = event.name || '';
     const desc = event.description || '';
     const endTs = event.endTs || 0;
 
@@ -71,6 +72,11 @@ function EventCard({event}: {event: GotmEvent}) {
             <div className="flex justify-between items-center my-3">
                 <span className="text-emerald-400 text-xl">{ timeLeft }</span>
                 <span className="font-bold text-3xl">{ endDate }</span>
+            </div>
+
+            <div className="flex justify-between items-center my-3">
+                <span className="text-xl">Creator: </span>
+                <span className="text-emerald-400 text-xl">{ name }</span>
             </div>
 
             { desc.length > 0 ? <div className="mt-10">

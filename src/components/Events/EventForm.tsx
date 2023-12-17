@@ -9,10 +9,10 @@ import '../../styles/react-calendar.css';
 import { useNavigate } from 'react-router-dom';
 import { PutCommand, PutCommandOutput } from "@aws-sdk/lib-dynamodb";
 
-import { EventForm, GotmEvent } from './Event';
+import { EventFormType, GotmEvent } from './Event';
 import { encodeEventPath } from '../../helpers/paths';
 
-function convertFormToEvent(values: EventForm): GotmEvent {
+function convertFormToEvent(values: EventFormType): GotmEvent {
     // generate key values
     const createdTs = Date.now();
     const endTs = values.endDate;
@@ -32,7 +32,7 @@ function convertFormToEvent(values: EventForm): GotmEvent {
     return ge;
 }
 
-async function putEvent(values: EventForm): Promise<GotmEvent> {
+async function putEvent(values: EventFormType): Promise<GotmEvent> {
     // setup put command
     const event: GotmEvent = convertFormToEvent(values)
     const command = new PutCommand({
@@ -47,7 +47,7 @@ async function putEvent(values: EventForm): Promise<GotmEvent> {
 function EventForm() {
     const navigate = useNavigate();
     const tomorrow = new Date(Date.now() + 1 * 24 * 60 * 60 * 1000);
-    const initialValues: EventForm = { title: '', description: '', endDate: tomorrow.valueOf(), public: true };
+    const initialValues: EventFormType = { title: '', description: '', endDate: tomorrow.valueOf(), public: true };
 
     return (
         <Formik
