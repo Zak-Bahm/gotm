@@ -56,7 +56,7 @@ function EventCard({event}: {event: GotmEvent}) {
     const name = event.name || '';
     const desc = event.description || '';
     const endTs = event.endTs || 0;
-    const groupId = encodeEventPath(event.groupEventId || '') || '';
+    const groupPath = '/' + (encodeEventPath(event.groupEventId || '') || '#');
 
     // determine formatted date string and time left
     let endDate = '';
@@ -84,9 +84,9 @@ function EventCard({event}: {event: GotmEvent}) {
                 <span className="text-emerald-400 text-xl">{ name }</span>
             </div>
 
-            { groupId.length > 0 ? <div className="flex justify-between items-center my-3 mt-10">
+            { groupPath.length > 0 ? <div className="flex justify-between items-center my-3 mt-10">
                 <span className="font-bold text-2xl">Related events: </span>
-                <Link to={ groupId }>
+                <Link to={ groupPath }>
                     <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-base font-extrabold'>
                         <FontAwesomeIcon icon={faUsersViewfinder} className='me-1' />
                         View Group

@@ -59,7 +59,7 @@ function GroupEventListItem({group}: {group: GroupEvent}) {
     const path =  '/' + (encodeEventPath(group.itemId) || '#');
 
     // check if current url is the group path
-    const viewingGroupPage = window.location.pathname === '/' + path;
+    const viewingGroupPage = window.location.pathname === path;
 
     // determine formatted date string and time left
     let endDate = '';

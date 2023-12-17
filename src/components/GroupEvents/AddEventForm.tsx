@@ -47,7 +47,8 @@ async function putEvent(event: GotmEvent, groupId: string): Promise<any[]> {
     const updateGroup = new UpdateCommand({
         TableName: window.app.tableName,
         Key: {
-            "itemId": groupId,
+            itemType: "group-event",
+            itemId: groupId,
         },
         UpdateExpression: "set events = :eventList",
         ExpressionAttributeValues: {
@@ -63,7 +64,8 @@ async function putEvent(event: GotmEvent, groupId: string): Promise<any[]> {
         const unlinkEvent = new UpdateCommand({
             TableName: window.app.tableName,
             Key: {
-                "itemId": re,
+                itemType: "event",
+                itemId: re,
             },
             UpdateExpression: "set groupEventId = :groupId",
             ExpressionAttributeValues: {
@@ -77,7 +79,8 @@ async function putEvent(event: GotmEvent, groupId: string): Promise<any[]> {
     const updateEvent = new UpdateCommand({
         TableName: window.app.tableName,
         Key: {
-            "itemId": event.itemId,
+            itemType: "event",
+            itemId: event.itemId,
         },
         UpdateExpression: "set groupEventId = :groupId",
         ExpressionAttributeValues: {
@@ -129,7 +132,7 @@ function AddEventForm({groupId, setEvent}: {groupId: string, setEvent: (e: GotmE
           onSubmit={async (values, actions) => {
             actions.setSubmitting(false);
             const event: GotmEvent = JSON.parse(values.event);
-            // const update = await putEvent(event, groupId).catch(e => console.error(e));
+            const update = await putEvent(event, groupId).catch(e => console.error(e));
 
             setEvent(event);
           }}

@@ -55,8 +55,10 @@ function IncludedEvents({groupId, eventQueue, setQueue}: {groupId: string, event
                 eventPromises.push(window.ddb.send(eventCommand));
             }
 
-            // get all events returned
-            Promise.all(eventPromises).then(v => console.log(v));
+            // get all events returned and set them
+            const eventResps = await Promise.all(eventPromises).catch(e => console.error(e)) || [];
+            const events = eventResps.map(e => e.Item);
+            setEvents(events);
         }
 
         getEvents().then(() => setLoading(false)).catch(e => console.error(e));
