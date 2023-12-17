@@ -7,18 +7,18 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import '../../styles/react-calendar.css';
 import { useNavigate } from 'react-router-dom';
-import { PutCommand, PutCommandOutput } from "@aws-sdk/lib-dynamodb";
+import { PutCommand } from "@aws-sdk/lib-dynamodb";
 
-import { EventFormType, GotmEvent } from './Event';
+import { GroupEventFormType, GroupEvent } from './GroupEvent';
 import { encodeEventPath } from '../../helpers/paths';
 
-function convertFormToEvent(values: EventFormType): GotmEvent {
+function convertFormToGroupEvent(values: GroupEventFormType): GroupEvent {
     // generate key values
     const createdTs = Date.now();
     const endTs = values.endDate;
-    const itemId = `${window.usr.id}/events/${endTs}`;
-    const ge: GotmEvent = {
-        itemType: "event",
+    const itemId = `${window.usr.id}/group-events/${endTs}`;
+    const ge: GroupEvent = {
+        itemType: "group-event",
         itemId: itemId,
         endTs: endTs,
         name: window.usr.name ?? '',
@@ -27,15 +27,15 @@ function convertFormToEvent(values: EventFormType): GotmEvent {
         title: values.title,
         description: values.description,
         public: values.public,
-        groupEventId: ''
+        events: []
     }
 
     return ge;
 }
 
-async function putEvent(values: EventFormType): Promise<GotmEvent> {
+async function putGroupEvent(values: GroupEventFormType): Promise<GroupEvent> {
     // setup put command
-    const event: GotmEvent = convertFormToEvent(values)
+    const event: GroupEvent = convertFormToGroupEvent(values)
     const command = new PutCommand({
         TableName: window.app.tableName,
         Item: event
@@ -45,17 +45,17 @@ async function putEvent(values: EventFormType): Promise<GotmEvent> {
     return event;
 }
 
-function EventForm() {
+function GroupEventForm() {
     const navigate = useNavigate();
     const tomorrow = new Date(Date.now() + 1 * 24 * 60 * 60 * 1000);
-    const initialValues: EventFormType = { title: '', description: '', endDate: tomorrow.valueOf(), public: true };
+    const initialValues: GroupEventFormType = { title: '', description: '', endDate: tomorrow.valueOf(), public: true };
 
     return (
         <Formik
           initialValues={initialValues}
           onSubmit={async (values, actions) => {
             actions.setSubmitting(false);
-            const event = await putEvent(values);
+            const event = await putGroupEvent(values);
             const encoded = encodeEventPath(event.itemId);
             const path = encoded === false ? '/' : `/${encoded}`;
 
@@ -65,10 +65,10 @@ function EventForm() {
         {({ setFieldValue }) => (
           <Form className="grid gap-x-8 grid-cols-1 lg:grid-cols-2 font-extrabold m-3 p-5 lg:p-10 rounded-lg shadow-dark-out overflow-x-hidden">
             <div className="grid grid-cols-1">
-                <label htmlFor="title" className="font-extrabold text-3xl mb-3">What&apos;s the Event called?</label>
+                <label htmlFor="title" className="font-extrabold text-3xl mb-3">What&apos;s the Group Event called?</label>
                 <Field id="title" type="text" name="title" className="shadow-light-in bg-gray-700 rounded-lg p-3 mb-3"/>
 
-                <label htmlFor="description" className="font-extrabold text-3xl mb-3">What&apos;s it about?</label>
+                <label htmlFor="description" className="font-extrabold text-3xl mb-3">What kind of Event should people make for it?</label>
                 <Field id="description" component="textarea" rows="8" name="description" className="shadow-light-in bg-gray-700 rounded-lg p-3 mb-3"/>
             </div>
 
@@ -77,12 +77,7 @@ function EventForm() {
                 <Field id="endDate" type="hidden" name="endDate"/>
                 <Calendar className="react-calendar-override text-xl mb-5" minDate={tomorrow} defaultValue={tomorrow} onClickDay={d => setFieldValue('endDate', d.valueOf())}/>
 
-                {/* <label htmlFor="public" className="font-extrabold text-3xl mb-3 custom-checkbox items-baseline">
-                    <Field id="public" type="checkbox" name="public"/>
-                    This is a public event
-                </label> */}
-
-                <button type="submit" className='mt-12 shadow-light-in bg-gray-700 rounded-lg p-3 text-2xl font-extrabold'>Create Event</button>
+                <button type="submit" className='mt-12 shadow-light-in bg-gray-700 rounded-lg p-3 text-2xl font-extrabold'>Create Group Event</button>
             </div>
           </Form>
         )}
@@ -90,4 +85,4 @@ function EventForm() {
     )
 }
 
-export default EventForm;
+export default GroupEventForm;

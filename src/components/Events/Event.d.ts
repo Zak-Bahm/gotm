@@ -15,4 +15,5 @@ export interface GotmEvent {
     title: string;
     description: string;
     public: boolean;
+    groupEventId: string // usr.id/group-events/endTs
 }

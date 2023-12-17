@@ -3,6 +3,9 @@ import { useState, useEffect } from 'react';
 import SimpleLoad from '../SimpleLoad';
 import { GotmEvent } from './Event';
 import { GetCommand } from '@aws-sdk/lib-dynamodb';
+import { faUsersViewfinder } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
 
 // for the events component, show the loading symbol if still loading,
 // otherwise an event card
@@ -52,6 +55,7 @@ function EventCard({event}: {event: GotmEvent}) {
     const name = event.name || '';
     const desc = event.description || '';
     const endTs = event.endTs || 0;
+    const groupId = event.groupEventId || '';
 
     // determine formatted date string and time left
     let endDate = '';
@@ -67,6 +71,15 @@ function EventCard({event}: {event: GotmEvent}) {
                 <h3 className="font-extrabold text-5xl">
                     { title }
                 </h3>
+
+                { groupId.length > 0 ? <div className="flex justify-between items-center my-3">
+                    <Link to='/'>
+                        <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-base font-extrabold'>
+                            <FontAwesomeIcon icon={faUsersViewfinder} className='me-1' />
+                            View Group
+                        </button>
+                    </Link>
+                </div> : "" }
             </div>
 
             <div className="flex justify-between items-center my-3">

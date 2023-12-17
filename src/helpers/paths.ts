@@ -6,7 +6,7 @@ function encodeEventPath(eventPath: string): string | false {
     const pathParts = eventPath.split("/");
 
     // validate parts
-    if (pathParts.length != 3 || pathParts[1] !== 'events') return false;
+    if (pathParts.length != 3 || (pathParts[1] !== 'events' && pathParts[1] !== 'group-events')) return false;
 
     // encode other parts and re-assemble
     let fullPath = '';
@@ -14,7 +14,7 @@ function encodeEventPath(eventPath: string): string | false {
         const userId = BigInt(pathParts[0]).toString(numBase);
         const eventId = BigInt(pathParts[2]).toString(numBase);
 
-        fullPath = `${userId}/events/${eventId}`;
+        fullPath = `${userId}/${pathParts[1]}/${eventId}`;
     } catch (error) {
         return false;
     }
@@ -28,7 +28,7 @@ function decodeEventPath(eventPath: string): string | false {
     const pathParts = eventPath.split("/");
 
     // validate parts
-    if (pathParts.length != 3 || pathParts[1] !== 'events') return false;
+    if (pathParts.length != 3 || (pathParts[1] !== 'events' && pathParts[1] !== 'group-events')) return false;
 
     // decode other parts and re-assemble
     let fullPath = '';
@@ -36,7 +36,7 @@ function decodeEventPath(eventPath: string): string | false {
         const userId = parseBigInt(pathParts[0]).toString();
         const eventId = parseBigInt(pathParts[2]).toString();
 
-        fullPath = `${userId}/events/${eventId}`;
+        fullPath = `${userId}/${pathParts[1]}/${eventId}`;
     } catch (error) {
         return false;
     }
