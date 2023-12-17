@@ -38,6 +38,7 @@ function EventPage() {
     return (
         <div className="w-screen mx-auto container grid grid-cols-1 lg:grid-cols-3 gap-x-8">
             <animated.div style={{...eventAnim}} className="lg:col-span-1 mt-7">
+                <Header title="No Event Found" />
                 <LoadEventCard eventId={eventKey} />
             </animated.div>
 
