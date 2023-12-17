@@ -53,6 +53,9 @@ function LoadEventCard({eventId}: {eventId: string}) {
 }
 
 async function leaveGroup(event: GotmEvent, setInGroup: (u: boolean) => void) {
+    // ensure we have a group id
+    if (typeof event.groupEventId == 'undefined' || event.groupEventId === '') return;
+
     // first remove link from group event
     await putEvent(false, event.groupEventId);
 
@@ -66,8 +69,9 @@ function EventCard({event}: {event: GotmEvent}) {
     const name = event.name || '';
     const desc = event.description || '';
     const endTs = event.endTs || 0;
-    const groupPath = '/' + (encodeEventPath(event.groupEventId || '') || '#');
-    const [inGroup, setInGroup] = useState(event.groupEventId.length > 0);
+    const groupId = event.groupEventId || '';
+    const groupPath = '/' + (encodeEventPath(groupId) || '#');
+    const [inGroup, setInGroup] = useState(groupId.length > 0);
 
     // determine formatted date string and time left
     let endDate = '';
