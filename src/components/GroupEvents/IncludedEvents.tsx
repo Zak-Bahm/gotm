@@ -12,8 +12,8 @@ function Events({loading, events}: {loading: boolean, events: GotmEvent[]}) {
     if (events.length === 0) return <p className="m-3">No events found</p>;
 
     return <ul className='list-none'>
-        {events.map((e, i, events) => {
-            return <EventListItem key={i} event={e} last={i + 1 === events.length} />
+        {events.map((e, i) => {
+            return <EventListItem key={i} event={e} />
         })}
     </ul>;
 }
@@ -69,7 +69,7 @@ function IncludedEvents({groupId, eventQueue, setQueue}: {groupId: string, event
                 newEvents.push(newEvent);
             }
             setQueue([]);
-            setQueue(newEvents)
+            setEvents(newEvents)
         }
     }, [eventQueue])
 

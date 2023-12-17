@@ -1,7 +1,7 @@
 import { formatDistanceToNow } from 'date-fns';
 import { GotmEvent } from './Event';
 import { Link } from "react-router-dom";
-import { decodeEventPath, encodeEventPath } from '../../helpers/paths';
+import { checkOwnerShip, decodeEventPath, encodeEventPath } from '../../helpers/paths';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarDay } from '@fortawesome/free-solid-svg-icons';
 import SimpleLoad from '../SimpleLoad';
@@ -52,9 +52,10 @@ function LoadEventListItem({eventId}: {eventId: string}) {
 }
 function EventListItem({event}: {event: GotmEvent}) {
     const title = event.title || 'Event';
+    const name = event.name || '';
     const desc = event.description || '';
     const endTs = event.endTs || 0;
-    const path = encodeEventPath(event.itemId) || '#';
+    const path =  '/' + (encodeEventPath(event.itemId) || '#');
 
     // determine formatted date string and time left
     let endDate = '';
@@ -81,6 +82,11 @@ function EventListItem({event}: {event: GotmEvent}) {
             <span className="text-emerald-400 text-xl">{ timeLeft }</span>
             <span className="font-bold text-3xl">{ endDate }</span>
         </div>
+
+        { checkOwnerShip(path) == false ? <div className="flex justify-between items-center my-3">
+            <span className="text-xl">Creator: </span>
+            <span className="text-emerald-400 text-xl">{ name }</span>
+        </div> : "" }
 
         { desc.length > 0 ? <div>
             <h5 className="font-extrabold text-xl mb-3">What&apos;s it about?</h5>

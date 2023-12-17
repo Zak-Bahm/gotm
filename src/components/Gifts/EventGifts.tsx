@@ -16,7 +16,6 @@ function Gifts({loading, gifts}: {loading: boolean, gifts: Gift[]}) {
     const listOwnership = checkOwnerShip();
     if (listOwnership) {
         gifts = gifts.filter(g => {
-            console.log(g.creatorId)
             return typeof g.creatorId === "undefined" || g.creatorId === window.usr?.id
         })
     }

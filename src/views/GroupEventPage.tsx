@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from "@fortawesome/free-solid-svg-icons";
 import IncludedEvents from "../components/GroupEvents/IncludedEvents";
 import { LoadGroupEventListItem } from "../components/GroupEvents/GroupEventListItem";
+import AddEventForm from "../components/GroupEvents/AddEventForm";
 
 function GroupEventPage() {
     // assemble event key from route params
@@ -38,8 +39,21 @@ function GroupEventPage() {
                 <LoadGroupEventListItem groupId={groupKey}/>
             </div>
 
+            <div className="row my-10 items-center m-1 z-20">
+                <AddEventForm groupId={groupKey} setEvent={addEvent}/>
+            </div>
+
             <div className="row my-10 items-center m-1 mb-0">
-                <Header title="Included Events"></Header>
+                <div className="flex justify-between items-center p-5 rounded-lg shadow-dark-out">
+                    <h3 className="font-extrabold text-5xl">Included Events</h3>
+
+                    <Link to='/'>
+                        <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-base font-extrabold'>
+                            <FontAwesomeIcon icon={faHouse} className='me-1' />
+                            Go Home
+                        </button>
+                    </Link>
+                </div>
             </div>
 
             <div className="row my-10 items-center m-1 mb-0">

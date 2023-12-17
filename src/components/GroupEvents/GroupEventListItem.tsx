@@ -5,7 +5,7 @@ import { GetCommand } from '@aws-sdk/lib-dynamodb';
 import { GroupEvent } from './GroupEvent';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { encodeEventPath } from '../../helpers/paths';
+import { checkOwnerShip, encodeEventPath } from '../../helpers/paths';
 import { faUsersViewfinder } from '@fortawesome/free-solid-svg-icons';
 
 // show the loading symbol if still loading,
@@ -56,7 +56,7 @@ function GroupEventListItem({group}: {group: GroupEvent}) {
     const name = group.name || '';
     const desc = group.description || '';
     const endTs = group.endTs || 0;
-    const path = encodeEventPath(group.itemId) || '#';
+    const path =  '/' + (encodeEventPath(group.itemId) || '#');
 
     // check if current url is the group path
     const viewingGroupPage = window.location.pathname === '/' + path;
@@ -88,10 +88,10 @@ function GroupEventListItem({group}: {group: GroupEvent}) {
                 <span className="font-bold text-3xl">{ endDate }</span>
             </div>
 
-            <div className="flex justify-between items-center my-3">
+            { checkOwnerShip(path) == false ? <div className="flex justify-between items-center my-3">
                 <span className="text-xl">Creator: </span>
                 <span className="text-emerald-400 text-xl">{ name }</span>
-            </div>
+            </div> : "" }
 
             { desc.length > 0 ? <div>
                 <h5 className="font-extrabold text-xl mb-3">What&apos;s it about?</h5>
