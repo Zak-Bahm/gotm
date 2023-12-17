@@ -3,7 +3,7 @@ import SimpleLoad from '../SimpleLoad';
 
 import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { addYears, setYear, getYear } from 'date-fns';
-import EventListItem from './EventListItem';
+import { EventListItem } from './EventListItem';
 import { GotmEvent } from './Event';
 
 // for the events component, show the loading symbol if still loading,
