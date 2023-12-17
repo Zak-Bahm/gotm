@@ -17,12 +17,25 @@ function Home() {
     const [isOpen, setOpen] = useState(false);
 
     const reveal = useSpring({
-        from: { opacity: 0, height: 0, y: 0 , marginTop: 0},
-        to: {
-            opacity: isOpen ? 1 : 0,
-            height: isOpen ? 'auto' : 0,
-            y: isOpen ? 20 : 0
-        }
+        from: { opacity: 0, height: 0, y: 0 , marginTop: 0, display: 'none'},
+        to: async (next, cancel) => {
+            if (isOpen) {
+                await next({ display: 'unset' })
+                await next({
+                    opacity: 1,
+                    height: 'auto',
+                    y: 20,
+                })
+            } else {
+                await next({
+                    opacity: 0,
+                    height: 0,
+                    y: 0,
+                })
+                await next({ display: 'none' })
+            }
+        },
+
     });
 
 
@@ -41,6 +54,20 @@ function Home() {
                     <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-base font-extrabold' onClick={window.logOut}>Log Out</button>
                 </span>
             </div>
+
+            <div className="row my-10 grid grid-cols-1 lg:grid-cols-2 justify-between items-center m-1 mb-0">
+                <h3 className="font-extrabold text-2xl pb-3 lg:pb-0">View your previous events:</h3>
+                <div className="grid lg:justify-items-end">
+                    <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-xl font-extrabold' onClick={() => togglePastEvents()}>
+                        <FontAwesomeIcon icon={isOpen ? faCircleMinus : faCirclePlus} className="me-1" />
+                        {isOpen ? "Hide" : "Show"} Events
+                    </button>
+                </div>
+            </div>
+
+            <animated.div style={{...reveal}} className="grid mb-1">
+                <UserEvents id={window.usr.id ?? ''} past={true}/>
+            </animated.div>
 
             <div className="row my-10 grid grid-cols-1 lg:grid-cols-2 justify-between items-center m-1 z-20">
                 <h3 className="font-extrabold text-2xl pb-3 lg:pb-0">Here are your upcoming events:</h3>
@@ -61,20 +88,6 @@ function Home() {
             </div>
 
             <UserEvents id={window.usr.id ?? ''} past={false}/>
-
-            <div className="row my-10 grid grid-cols-1 lg:grid-cols-2 justify-between items-center m-1 mb-0">
-                <h3 className="font-extrabold text-2xl pb-3 lg:pb-0">View your previous events:</h3>
-                <div className="grid lg:justify-items-end">
-                    <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-xl font-extrabold' onClick={() => togglePastEvents()}>
-                        <FontAwesomeIcon icon={isOpen ? faCircleMinus : faCirclePlus} className="me-1" />
-                        {isOpen ? "Hide" : "Show"} Events
-                    </button>
-                </div>
-            </div>
-
-            <animated.div style={{...reveal}} className="grid mb-1">
-                <UserEvents id={window.usr.id ?? ''} past={true}/>
-            </animated.div>
         </div>
     )
 }
