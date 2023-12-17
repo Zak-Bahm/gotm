@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserEvents from "../components/Events/UserEvents"
 import { Link } from "react-router-dom";
 import { useSpring, animated } from '@react-spring/web';
-import { faCalendarPlus, faCircleMinus, faCirclePlus } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarPlus, faCircleMinus, faCirclePlus, faUsersViewfinder } from "@fortawesome/free-solid-svg-icons";
 
 import { useState } from 'react';
 
@@ -44,12 +44,20 @@ function Home() {
 
             <div className="row my-10 grid grid-cols-1 lg:grid-cols-2 justify-between items-center m-1 z-20">
                 <h3 className="font-extrabold text-2xl pb-3 lg:pb-0">Here are your upcoming events:</h3>
-                <Link to="/event/new" className="grid lg:justify-items-end">
-                    <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-xl font-extrabold'>
-                        <FontAwesomeIcon icon={faCalendarPlus} className="me-1"/>
-                        Make an Event
-                    </button>
-                </Link>
+                <div className="flex justify-end items-center">
+                    <Link to="/event/new" className="me-3">
+                        <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-xl font-extrabold'>
+                            <FontAwesomeIcon icon={faCalendarPlus} className="me-1"/>
+                            Make an Event
+                        </button>
+                    </Link>
+                    <Link to="/event/group">
+                        <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-xl font-extrabold'>
+                            <FontAwesomeIcon icon={faUsersViewfinder} className="me-1"/>
+                            Make a Group Event
+                        </button>
+                    </Link>
+                </div>
             </div>
 
             <UserEvents id={window.usr.id ?? ''} past={false}/>
