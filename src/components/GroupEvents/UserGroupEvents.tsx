@@ -5,29 +5,23 @@ import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { addYears, setYear, getYear } from 'date-fns';
 import { EventListItem } from './EventListItem';
 import { GotmEvent } from './Event';
-import { GroupEvent } from '../GroupEvents/GroupEvent';
-import { GroupEventListItem } from '../GroupEvents/GroupEventListItem';
 
 // for the events component, show the loading symbol if still loading,
 // otherwise a list of events
-function Events({loading, events}: {loading: boolean, events: (GotmEvent|GroupEvent)[] }) {
+function Events({loading, events}: {loading: boolean, events: GotmEvent[] }) {
     if (loading) return <SimpleLoad />;
     if (events.length === 0) return <p>Nothing to see here. Why don't you make a new event?</p>;
 
     return <ul className='list-none'>
-        {events.map((e, i) => {
-            if (e.itemType === 'event') {
-                return <EventListItem key={i} event={e} />
-            } else {
-                return <GroupEventListItem key={i} group={e} />
-            }
+        {events.map((e, i, events) => {
+            return <EventListItem key={i} event={e} last={i + 1 === events.length} />
         })}
     </ul>;
 }
 
 function UserEvents({id, past}: {id: string, past: boolean}) {
     const [loading, setLoading] = useState(true);
-    const [events, setEvents] = useState<(GotmEvent|GroupEvent)[]>([]);
+    const [events, setEvents] = useState([]);
 
 
     // load user events after first render
@@ -46,7 +40,6 @@ function UserEvents({id, past}: {id: string, past: boolean}) {
                 start = setYear(end, getYear(end) - 1).getTime();
             }
 
-            // get standard events first
             const command = new QueryCommand({
                 TableName: window.app.tableName,
                 KeyConditionExpression: 'itemType = :itemType AND itemId BETWEEN :itemId1 AND :itemId2',
@@ -56,23 +49,9 @@ function UserEvents({id, past}: {id: string, past: boolean}) {
                     ":itemId2": `${userId}/events/${end}`
                 }
             });
+
             const data = await window.ddb.send(command);
-
-            // then get group events
-            const groupCommand = new QueryCommand({
-                TableName: window.app.tableName,
-                KeyConditionExpression: 'itemType = :itemType AND itemId BETWEEN :itemId1 AND :itemId2',
-                ExpressionAttributeValues: {
-                    ":itemType": "group-event",
-                    ":itemId1": `${userId}/group-events/${start}`,
-                    ":itemId2": `${userId}/group-events/${end}`
-                }
-            });
-            const groupData = await window.ddb.send(groupCommand);
-
-            // merge the .Items arrays from both sets of data
-            const mergedEvents = [...data.Items, ...groupData.Items];
-            setEvents(mergedEvents);
+            setEvents(data.Items);
         }
 
         getEvents().then(() => setLoading(false)).catch(e => console.error(e));

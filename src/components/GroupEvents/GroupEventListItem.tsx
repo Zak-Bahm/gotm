@@ -59,7 +59,7 @@ function GroupEventListItem({group}: {group: GroupEvent}) {
     const path = encodeEventPath(group.itemId) || '#';
 
     // check if current url is the group path
-    const viewingGroupPage = window.location.pathname === path;
+    const viewingGroupPage = window.location.pathname === '/' + path;
 
     // determine formatted date string and time left
     let endDate = '';
@@ -72,10 +72,10 @@ function GroupEventListItem({group}: {group: GroupEvent}) {
     return (
         <li className="shadow-dark-out rounded-lg p-7 mt-7 grid grid-flow-row auto-rows-max">
             <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
-                <h3 className="font-extrabold text-5xl mb-3">
-                    Group Event: { title }
+                <h3 className="font-extrabold text-4xl mb-3">
+                    <span className="text-emerald-400">Group Event: </span>{ title }
                 </h3>
-                { viewingGroupPage ? <Link to={ path } className="grid lg:justify-items-end">
+                { !viewingGroupPage ? <Link to={ path } className="grid lg:justify-items-end">
                     <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-xl font-extrabold'>
                         <FontAwesomeIcon icon={faUsersViewfinder} className="me-1" />
                         View Group Event

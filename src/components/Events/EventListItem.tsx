@@ -20,7 +20,7 @@ function DynEventListItem({loading, event}: {loading: boolean, event: GotmEvent 
         </div>
     </div>
 
-    return <EventListItem event={event} last={false}/>;
+    return <EventListItem event={event}/>;
 }
 
 function LoadEventListItem({eventId}: {eventId: string}) {
@@ -50,7 +50,7 @@ function LoadEventListItem({eventId}: {eventId: string}) {
         <DynEventListItem loading={loading} event={event} />
     )
 }
-function EventListItem({event, last}: {event: GotmEvent, last: boolean}) {
+function EventListItem({event}: {event: GotmEvent}) {
     const title = event.title || 'Event';
     const desc = event.description || '';
     const endTs = event.endTs || 0;
