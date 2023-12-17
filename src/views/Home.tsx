@@ -42,6 +42,18 @@ function Home() {
                 </span>
             </div>
 
+            <div className="row my-10 grid grid-cols-1 lg:grid-cols-2 justify-between items-center m-1 z-20">
+                <h3 className="font-extrabold text-2xl pb-3 lg:pb-0">Here are your upcoming events:</h3>
+                <Link to="/event/new" className="grid lg:justify-items-end">
+                    <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-xl font-extrabold'>
+                        <FontAwesomeIcon icon={faCalendarPlus} className="me-1"/>
+                        Make an Event
+                    </button>
+                </Link>
+            </div>
+
+            <UserEvents id={window.usr.id ?? ''} past={false}/>
+
             <div className="row my-10 grid grid-cols-1 lg:grid-cols-2 justify-between items-center m-1 mb-0">
                 <h3 className="font-extrabold text-2xl pb-3 lg:pb-0">View your previous events:</h3>
                 <div className="grid lg:justify-items-end">
@@ -55,18 +67,6 @@ function Home() {
             <animated.div style={{...reveal}} className="grid mb-1">
                 <UserEvents id={window.usr.id ?? ''} past={true}/>
             </animated.div>
-
-            <div className="row my-10 grid grid-cols-1 lg:grid-cols-2 justify-between items-center m-1">
-                <h3 className="font-extrabold text-2xl pb-3 lg:pb-0">Here are your upcoming events:</h3>
-                <Link to="/event/new" className="grid lg:justify-items-end">
-                    <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-xl font-extrabold'>
-                        <FontAwesomeIcon icon={faCalendarPlus} className="me-1"/>
-                        Make an Event
-                    </button>
-                </Link>
-            </div>
-
-            <UserEvents id={window.usr.id ?? ''} past={false}/>
         </div>
     )
 }
