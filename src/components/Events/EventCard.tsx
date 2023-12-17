@@ -6,6 +6,7 @@ import { GetCommand } from '@aws-sdk/lib-dynamodb';
 import { faUsersViewfinder } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
+import { encodeEventPath } from '../../helpers/paths';
 
 // for the events component, show the loading symbol if still loading,
 // otherwise an event card
@@ -55,7 +56,7 @@ function EventCard({event}: {event: GotmEvent}) {
     const name = event.name || '';
     const desc = event.description || '';
     const endTs = event.endTs || 0;
-    const groupId = event.groupEventId || '';
+    const groupId = encodeEventPath(event.groupEventId || '') || '';
 
     // determine formatted date string and time left
     let endDate = '';
@@ -71,18 +72,9 @@ function EventCard({event}: {event: GotmEvent}) {
                 <h3 className="font-extrabold text-5xl">
                     { title }
                 </h3>
-
-                { groupId.length > 0 ? <div className="flex justify-between items-center my-3">
-                    <Link to='/'>
-                        <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-base font-extrabold'>
-                            <FontAwesomeIcon icon={faUsersViewfinder} className='me-1' />
-                            View Group
-                        </button>
-                    </Link>
-                </div> : "" }
             </div>
 
-            <div className="flex justify-between items-center my-3">
+            <div className="flex justify-between items-center my-3 mt-10">
                 <span className="text-emerald-400 text-xl">{ timeLeft }</span>
                 <span className="font-bold text-3xl">{ endDate }</span>
             </div>
@@ -91,6 +83,16 @@ function EventCard({event}: {event: GotmEvent}) {
                 <span className="text-xl">Creator: </span>
                 <span className="text-emerald-400 text-xl">{ name }</span>
             </div>
+
+            { groupId.length > 0 ? <div className="flex justify-between items-center my-3 mt-10">
+                <span className="font-bold text-2xl">Related events: </span>
+                <Link to={ groupId }>
+                    <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-base font-extrabold'>
+                        <FontAwesomeIcon icon={faUsersViewfinder} className='me-1' />
+                        View Group
+                    </button>
+                </Link>
+            </div> : "" }
 
             { desc.length > 0 ? <div className="mt-10">
                 <h5 className="font-extrabold text-xl mb-3">What&apos;s it about?</h5>
