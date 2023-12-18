@@ -6,7 +6,7 @@ import { GetCommand } from '@aws-sdk/lib-dynamodb';
 import { faUsersViewfinder } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
-import { encodeEventPath } from '../../helpers/paths';
+import { checkOwnerShip, encodeEventPath } from '../../helpers/paths';
 import { putEvent } from '../GroupEvents/AddEventForm';
 
 // for the events component, show the loading symbol if still loading,
@@ -72,6 +72,7 @@ function EventCard({event}: {event: GotmEvent}) {
     const groupId = event.groupEventId || '';
     const groupPath = '/' + (encodeEventPath(groupId) || '#');
     const [inGroup, setInGroup] = useState(groupId.length > 0);
+    const ownedEvent = checkOwnerShip(event.itemId)
 
     // determine formatted date string and time left
     let endDate = '';
@@ -114,7 +115,7 @@ function EventCard({event}: {event: GotmEvent}) {
                 <p className="font-normal">{ desc }</p>
             </div> : "" }
 
-            <div className="mt-10">
+            { ownedEvent ? <div className="mt-10">
                 <h3 className="font-bold text-2xl">
                     Actions
                 </h3>
@@ -124,7 +125,7 @@ function EventCard({event}: {event: GotmEvent}) {
                         Leave Group
                     </button> : "" }
                 </div>
-            </div>
+            </div> : "" }
         </div>
     )
 }
