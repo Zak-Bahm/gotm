@@ -110,7 +110,7 @@ function GiftListItem({gift, isOwner}: {gift: Gift, isOwner: boolean}) {
                     {
                         url ?
                         <a href={ url } target='_blank' className='font-extrabold'>
-                            { store || url }
+                            { store || 'this link' }
                             <FontAwesomeIcon icon={faLink} className='ms-1' />
                         </a>
                         :
