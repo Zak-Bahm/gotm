@@ -19,3 +19,15 @@ export interface Gift {
     giverName: string;
     giverId: string;
 }
+
+export interface GiftIdea {
+    itemType: "gift-idea";
+    itemId: string; // usr.id/gift-ideas/createdTs
+    createdTs: number;
+    creatorId: string;
+    title: string;
+    description: string;
+    store: string;
+    url: string;
+    cost: number;
+}

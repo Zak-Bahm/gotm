@@ -5,6 +5,7 @@ import { useSpring, animated } from '@react-spring/web';
 import { faCalendarPlus, faCircleMinus, faCirclePlus, faUsersViewfinder } from "@fortawesome/free-solid-svg-icons";
 
 import { useState } from 'react';
+import GiftIdeasList from "../components/Gifts/GiftIdeasList";
 
 function Home() {
     const greetings = [
@@ -54,6 +55,8 @@ function Home() {
                     <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-base font-extrabold' onClick={window.logOut}>Log Out</button>
                 </span>
             </div>
+
+            <GiftIdeasList />
 
             <div className="row my-10 grid grid-cols-1 lg:grid-cols-2 justify-between items-center m-1 mb-0">
                 <h3 className="font-extrabold text-2xl pb-3 lg:pb-0">View your previous events:</h3>

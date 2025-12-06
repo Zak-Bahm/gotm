@@ -6,8 +6,12 @@ import Header from "../components/Header";
 import GiftForm from "../components/Gifts/GiftForm";
 import EventGifts from "../components/Gifts/EventGifts";
 import { useState } from "react";
-import { Gift } from "../components/Gifts/Gift";
+import { Gift, GiftIdea } from "../components/Gifts/Gift";
 import { GotmEvent } from "../components/Events/Event";
+import GiftIdeasList from "../components/Gifts/GiftIdeasList";
+import { giftIdeaToGift, deleteGiftIdea } from "../components/Gifts/giftIdeas";
+import { saveGift } from "../components/Gifts/saveGift";
+import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 
 function EventPage() {
     // assemble event key from route params
@@ -39,6 +43,15 @@ function EventPage() {
     }
 
     const isReadOnly = Boolean(eventDetails?.endTs && eventDetails.endTs < Date.now());
+    const isCreator = Boolean(eventDetails && eventDetails.ownerId === window.usr?.id);
+
+    const handleIdeaAction = async (idea: GiftIdea) => {
+        if (!isCreator || isReadOnly || typeof eventKey !== 'string') return;
+        const newGift = giftIdeaToGift(eventKey, idea);
+        await saveGift(newGift);
+        addGift(newGift);
+        await deleteGiftIdea(idea.itemId);
+    };
 
     return (
         <div className="w-screen mx-auto container grid grid-cols-1 lg:grid-cols-3 gap-x-8">
@@ -49,6 +62,15 @@ function EventPage() {
             <animated.div style={{...giftAnim}} className="lg:col-span-2 mt-7 flex flex-col gap-y-4">
                 <Header title="Gifts" />
                 <GiftForm eventId={eventKey} newGift={addGift} readOnly={isReadOnly}/>
+                <GiftIdeasList
+                    hidden={!isCreator || isReadOnly}
+                    title="Saved Gift Ideas"
+                    emptyMessage="No saved ideas yet."
+                    onIdeaAction={handleIdeaAction}
+                    actionIcon={faCirclePlus}
+                    actionAriaLabel="Add this idea to your event"
+                    allowCreate={false}
+                />
                 <EventGifts eventId={eventKey} giftQueue={giftQueue} setQueue={setGiftQueue} readOnly={isReadOnly}/>
             </animated.div>
         </div>

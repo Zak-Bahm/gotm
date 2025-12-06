@@ -22,7 +22,7 @@ function Gifts({loading, gifts, readOnly}: {loading: boolean, gifts: Gift[], rea
 
     return <ul className='list-none'>
         {gifts.map((g, i) => {
-            return <GiftListItem gift={g} key={i} readOnly={readOnly} />
+            return <GiftListItem gift={g} key={i} readOnly={readOnly} canSaveIdea={listOwnership} />
         })}
     </ul>;
 }

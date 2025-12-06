@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useSpring, animated } from '@react-spring/web';
 import { PutCommand, DeleteCommand, DeleteCommandOutput } from "@aws-sdk/lib-dynamodb";
-import { Gift } from './Gift';
+import { Gift, GiftIdea } from './Gift';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk, faLink, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { saveGift } from './saveGift';
+import { buildGiftIdeaFromGift, saveGiftIdea } from './giftIdeas';
 
 async function removeGift(gift: Gift): Promise<boolean> {
     // ensure item id is present
@@ -42,7 +43,7 @@ async function reserveGift(gift: Gift, reserved: boolean): Promise<Gift> {
     return gift
 }
 
-function GiftListItem({gift, readOnly = false}: {gift: Gift, readOnly?: boolean}) {
+function GiftListItem({gift, readOnly = false, canSaveIdea = false}: {gift: Gift, readOnly?: boolean, canSaveIdea?: boolean}) {
     const [giftData, setGiftData] = useState(gift);
     const [hidden, setHidden] = useState(false);
     const [isRemoved, setIsRemoved] = useState(false);
@@ -56,6 +57,9 @@ function GiftListItem({gift, readOnly = false}: {gift: Gift, readOnly?: boolean}
         url: gift.url || ''
     });
     const [reserved, setReserved] = useState(gift.giverId !== '');
+    const [ideaSaved, setIdeaSaved] = useState(false);
+    const [ideaSaving, setIdeaSaving] = useState(false);
+    const [ideaError, setIdeaError] = useState('');
 
     const hide = useSpring({
         opacity: hidden ? 0 : 1,
@@ -121,6 +125,28 @@ function GiftListItem({gift, readOnly = false}: {gift: Gift, readOnly?: boolean}
     const handleRemove = async () => {
         const removed = await removeGift(giftData);
         if (removed) setHidden(true);
+    };
+
+    const canCreateIdea = readOnly && canSaveIdea && giftData.giverId === '' && !ideaSaved;
+
+    const handleSaveIdea = async () => {
+        if (!canCreateIdea || ideaSaving) return;
+        if (!window.usr?.id) {
+            setIdeaError('Please log in to save ideas.');
+            return;
+        }
+        setIdeaSaving(true);
+        setIdeaError('');
+        try {
+            const idea: GiftIdea = buildGiftIdeaFromGift(giftData);
+            await saveGiftIdea(idea);
+            setIdeaSaved(true);
+        } catch (e) {
+            console.error(e);
+            setIdeaError('Unable to save this idea.');
+        } finally {
+            setIdeaSaving(false);
+        }
     };
 
     if (isRemoved) return null;
@@ -192,9 +218,22 @@ function GiftListItem({gift, readOnly = false}: {gift: Gift, readOnly?: boolean}
         </div>
 
         { readOnly ? (
-            <p className="font-extrabold text-2xl pt-6 px-4">
-                { giftData.giverId ? `${giftData.giverName || 'Someone'} has reserved this gift` : 'This gift was not reserved.' }
-            </p>
+            <div className="flex flex-wrap items-center gap-3 mt-6 px-4">
+                <p className="font-extrabold text-2xl">
+                    { giftData.giverId ? `${giftData.giverName || 'Someone'} has reserved this gift` : 'This gift was not reserved.' }
+                </p>
+                { canCreateIdea ? (
+                    <button
+                        className='shadow-light-in bg-gray-700 rounded-lg p-3 text-base font-extrabold disabled:opacity-50'
+                        onClick={handleSaveIdea}
+                        disabled={ideaSaving}
+                    >
+                        { ideaSaving ? 'Saving...' : 'Save as Idea' }
+                    </button>
+                ) : null }
+                { ideaSaved ? <span className="text-emerald-400 font-bold text-base">Saved!</span> : null }
+                { ideaError.length > 0 ? <span className="text-red-400 font-bold text-base">{ ideaError }</span> : null }
+            </div>
         ) : creatorOnly ? (
             <div className="flex flex-wrap gap-3 mt-6">
                 <button
