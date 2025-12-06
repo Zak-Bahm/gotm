@@ -53,7 +53,7 @@ async function removeGift(gift: Gift): Promise<boolean> {
     const command = new DeleteCommand({
         TableName: window.app.tableName,
         Key: {
-            itemType: 'gift',
+            itemType: gift.itemType,
             itemId: gift.itemId
         }
     });
