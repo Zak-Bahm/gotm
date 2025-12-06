@@ -25,9 +25,18 @@ function DynEventCard({loading, event, setEvent}: {loading: boolean, event: Gotm
     return <EventCard event={event} setEvent={setEvent} />;
 }
 
-function LoadEventCard({eventId}: {eventId: string}) {
+function LoadEventCard({eventId, onEventChange}: {eventId: string, onEventChange?: (event: GotmEvent | null) => void}) {
     const [loading, setLoading] = useState(true);
     const [event, setEvent] = useState<GotmEvent | false>(false);
+    const updateEvent: Dispatch<SetStateAction<GotmEvent | false>> = (value) => {
+        setEvent(prev => {
+            const next = typeof value === 'function' ? (value as (current: GotmEvent | false) => GotmEvent | false)(prev) : value;
+            if (typeof onEventChange === 'function') {
+                onEventChange(next === false ? null : next);
+            }
+            return next;
+        });
+    };
 
     // load event after first render
     useEffect(() => {
@@ -42,14 +51,18 @@ function LoadEventCard({eventId}: {eventId: string}) {
             });
 
             const data = await window.ddb.send(command);
-            if (typeof data.Item != 'undefined') setEvent(data.Item);
+            if (typeof data.Item != 'undefined') {
+                updateEvent(data.Item);
+            } else {
+                updateEvent(false);
+            }
         }
 
         getEvents().then(() => setLoading(false)).catch(e => console.error(e));
     }, []);
 
     return (
-        <DynEventCard loading={loading} event={event} setEvent={setEvent} />
+        <DynEventCard loading={loading} event={event} setEvent={updateEvent} />
     )
 }
 
@@ -79,6 +92,8 @@ function EventCard({event, setEvent}: {event: GotmEvent, setEvent: Dispatch<SetS
         description: event.description || '',
         endTs: event.endTs || 0
     });
+    const eventEndTs = event.endTs || 0;
+    const eventHasPassed = eventEndTs !== 0 && eventEndTs < Date.now();
 
     useEffect(() => {
         setEditValues({
@@ -87,6 +102,11 @@ function EventCard({event, setEvent}: {event: GotmEvent, setEvent: Dispatch<SetS
             endTs: event.endTs || 0
         });
     }, [event]);
+    useEffect(() => {
+        if (eventHasPassed) {
+            setIsEditing(false);
+        }
+    }, [eventHasPassed]);
 
     const currentEndTs = (isEditing ? editValues.endTs : event.endTs) || 0;
     const displayTitle = isEditing ? editValues.title : (event.title || 'Event');
@@ -113,6 +133,7 @@ function EventCard({event, setEvent}: {event: GotmEvent, setEvent: Dispatch<SetS
     const canSave = editValues.title.trim().length > 0 && editValues.endTs !== 0;
 
     const handleEditClick = async () => {
+        if (eventHasPassed) return;
         if (!isEditing) {
             setIsEditing(true);
             setError('');
@@ -218,19 +239,19 @@ function EventCard({event, setEvent}: {event: GotmEvent, setEvent: Dispatch<SetS
                 ) }
             </div> : "" }
 
-            { ownedEvent ? <div className="mt-10">
+            { ownedEvent && !eventHasPassed ? <div className="mt-10">
                 <h3 className="font-bold text-2xl">
                     Actions
                 </h3>
                 <div className="flex flex-wrap gap-3 items-center mt-3">
-                    { inGroup ? <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-base font-extrabold' onClick={async () => {leaveGroup(event, setInGroup)}}>
+                    { inGroup ? <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-base font-extrabold disabled:opacity-50' onClick={async () => {leaveGroup(event, setInGroup)}} disabled={eventHasPassed}>
                         <FontAwesomeIcon icon={faUsersViewfinder} className='me-1' />
                         Leave Group
                     </button> : "" }
                     <button
                         className='shadow-light-in bg-gray-700 rounded-lg p-3 text-base font-extrabold disabled:opacity-50 flex items-center'
                         onClick={handleEditClick}
-                        disabled={isSaving || (isEditing && !canSave)}
+                        disabled={eventHasPassed || isSaving || (isEditing && !canSave)}
                     >
                         { isEditing ? (
                             <>

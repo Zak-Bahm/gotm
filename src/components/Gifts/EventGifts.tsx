@@ -8,13 +8,13 @@ import { checkOwnerShip } from '../../helpers/paths';
 
 // for the events component, show the loading symbol if still loading,
 // otherwise a list of events
-function Gifts({loading, gifts}: {loading: boolean, gifts: Gift[]}) {
+function Gifts({loading, gifts, readOnly}: {loading: boolean, gifts: Gift[], readOnly: boolean}) {
     if (loading) return <SimpleLoad />;
     if (gifts.length === 0) return <p className="m-3">No gifts found</p>;
 
     // if owner is viewing, filter out any gifts added by guests and not the owner
     const listOwnership = checkOwnerShip();
-    if (listOwnership) {
+    if (listOwnership && readOnly === false) {
         gifts = gifts.filter(g => {
             return typeof g.creatorId === "undefined" || g.creatorId === window.usr?.id
         })
@@ -22,12 +22,12 @@ function Gifts({loading, gifts}: {loading: boolean, gifts: Gift[]}) {
 
     return <ul className='list-none'>
         {gifts.map((g, i) => {
-            return <GiftListItem gift={g} key={i} isOwner={g.creatorId == window.usr.id || listOwnership} />
+            return <GiftListItem gift={g} key={i} readOnly={readOnly} />
         })}
     </ul>;
 }
 
-function EventGifts({eventId, giftQueue, setQueue}: {eventId: string, giftQueue: Gift[], setQueue: Dispatch<SetStateAction<Gift[]>>}) {
+function EventGifts({eventId, giftQueue, setQueue, readOnly = false}: {eventId: string, giftQueue: Gift[], setQueue: Dispatch<SetStateAction<Gift[]>>, readOnly?: boolean}) {
     const [loading, setLoading] = useState(true);
     const initGifts: Gift[] = [];
     const [gifts, setGifts] = useState(initGifts);
@@ -64,7 +64,7 @@ function EventGifts({eventId, giftQueue, setQueue}: {eventId: string, giftQueue:
     }, [giftQueue])
 
     return (
-        <Gifts loading={loading} gifts={gifts} />
+        <Gifts loading={loading} gifts={gifts} readOnly={readOnly} />
     )
 }
 

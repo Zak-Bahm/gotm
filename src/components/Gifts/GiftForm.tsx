@@ -42,7 +42,7 @@ async function putGift(values: GiftFormType, eventId: string): Promise<Gift> {
     return gift;
 }
 
-function GiftForm({eventId, newGift}: {eventId: string, newGift: (g: Gift) => void}) {
+function GiftForm({eventId, newGift, readOnly = false}: {eventId: string, newGift: (g: Gift) => void, readOnly?: boolean}) {
     const initialValues: GiftFormType = {
         title: '',
         description: '',
@@ -52,7 +52,6 @@ function GiftForm({eventId, newGift}: {eventId: string, newGift: (g: Gift) => vo
     };
 
     const [isOpen, setOpen] = useState(false);
-
     const reveal = useSpring({
         from: { opacity: 0, height: 0, y: 0 , marginTop: 0},
         to: {
@@ -61,6 +60,7 @@ function GiftForm({eventId, newGift}: {eventId: string, newGift: (g: Gift) => vo
             y: isOpen ? 20 : 0
         }
     });
+    if (readOnly) return null;
 
     const toggleForm = (resetForm: () => void) => {
         const newOpen = !isOpen;

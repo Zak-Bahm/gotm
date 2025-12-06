@@ -42,7 +42,7 @@ async function reserveGift(gift: Gift, reserved: boolean): Promise<Gift> {
     return gift
 }
 
-function GiftListItem({gift, isOwner}: {gift: Gift, isOwner: boolean}) {
+function GiftListItem({gift, readOnly = false}: {gift: Gift, readOnly?: boolean}) {
     const [giftData, setGiftData] = useState(gift);
     const [hidden, setHidden] = useState(false);
     const [isRemoved, setIsRemoved] = useState(false);
@@ -191,7 +191,11 @@ function GiftListItem({gift, isOwner}: {gift: Gift, isOwner: boolean}) {
             ) }
         </div>
 
-        { creatorOnly ? (
+        { readOnly ? (
+            <p className="font-extrabold text-2xl pt-6 px-4">
+                { giftData.giverId ? `${giftData.giverName || 'Someone'} has reserved this gift` : 'This gift was not reserved.' }
+            </p>
+        ) : creatorOnly ? (
             <div className="flex flex-wrap gap-3 mt-6">
                 <button
                     onClick={handleSave}
