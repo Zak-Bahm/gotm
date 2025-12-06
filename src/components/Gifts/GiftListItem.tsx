@@ -45,6 +45,7 @@ async function reserveGift(gift: Gift, reserved: boolean): Promise<Gift> {
 function GiftListItem({gift, isOwner}: {gift: Gift, isOwner: boolean}) {
     const [giftData, setGiftData] = useState(gift);
     const [hidden, setHidden] = useState(false);
+    const [isRemoved, setIsRemoved] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState('');
@@ -57,12 +58,10 @@ function GiftListItem({gift, isOwner}: {gift: Gift, isOwner: boolean}) {
     const [reserved, setReserved] = useState(gift.giverId !== '');
 
     const hide = useSpring({
-        to: {
-            opacity: hidden ? 0 : 1,
-            height: hidden ? 0 : 'auto',
-            y: hidden ? -20 : 0,
-            padding: hidden ? '0rem' : '1.75rem',
-            margin: hidden ? '0rem' : '0.75rem'
+        opacity: hidden ? 0 : 1,
+        transform: hidden ? 'translateY(-20px)' : 'translateY(0px)',
+        onRest: () => {
+            if (hidden) setIsRemoved(true);
         }
     });
 
@@ -123,6 +122,8 @@ function GiftListItem({gift, isOwner}: {gift: Gift, isOwner: boolean}) {
         const removed = await removeGift(giftData);
         if (removed) setHidden(true);
     };
+
+    if (isRemoved) return null;
 
     return <animated.li style={{...hide}} className="shadow-dark-out rounded-lg p-7 m-3 grid grid-cols-1 justify-start">
         <div className="grid grid-cols-1 lg:grid-cols-2 justify-between items-center gap-4">
