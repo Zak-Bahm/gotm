@@ -1,4 +1,4 @@
-export interface GiftForm {
+export interface GiftFormType {
     title: string;
     description: string;
     store: string;

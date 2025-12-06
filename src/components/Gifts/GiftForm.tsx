@@ -3,16 +3,16 @@ import {
     Form,
     Field
 } from 'formik';
-import { PutCommand, PutCommandOutput } from "@aws-sdk/lib-dynamodb";
 import { useSpring, animated } from '@react-spring/web';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleMinus, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 
-import { GiftForm, Gift } from './Gift';
+import { GiftFormType, Gift } from './Gift';
 import { useState } from 'react';
 import { checkOwnerShip, encodeEventPath } from "../../helpers/paths";
+import { saveGift } from './saveGift';
 
-function convertFormToGift(values: GiftForm, eventId: string): Gift {
+function convertFormToGift(values: GiftFormType, eventId: string): Gift {
     // check if current viewer is the owner
     const isOwner = checkOwnerShip(encodeEventPath(eventId) || "");
 
@@ -36,20 +36,14 @@ function convertFormToGift(values: GiftForm, eventId: string): Gift {
     return gift;
 }
 
-async function putGift(values: GiftForm, eventId: string): Promise<Gift> {
-    // setup put command
+async function putGift(values: GiftFormType, eventId: string): Promise<Gift> {
     const gift = convertFormToGift(values, eventId);
-    const command = new PutCommand({
-        TableName: window.app.tableName,
-        Item: gift
-    });
-    await window.ddb.send(command);
-
+    await saveGift(gift);
     return gift;
 }
 
 function GiftForm({eventId, newGift}: {eventId: string, newGift: (g: Gift) => void}) {
-    const initialValues: GiftForm = {
+    const initialValues: GiftFormType = {
         title: '',
         description: '',
         store: '',

@@ -3,47 +3,8 @@ import { useSpring, animated } from '@react-spring/web';
 import { PutCommand, DeleteCommand, DeleteCommandOutput } from "@aws-sdk/lib-dynamodb";
 import { Gift } from './Gift';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLink, faTrash } from '@fortawesome/free-solid-svg-icons';
-
-function giftAction(gift: Gift, isOwner: boolean, hideGift: () => void) {
-    // if owner return delete button early
-    if (isOwner) {
-        return <span>
-            <button onClick={async () => {
-                const removed = await removeGift(gift);
-                if (removed) hideGift();
-            } } className='mt-6 shadow-light-in bg-gray-700 rounded-lg p-3 text-base font-extrabold'>
-                <FontAwesomeIcon icon={faTrash} className='me-1' />
-                Remove Gift
-            </button>
-        </span>
-    }
-
-    // setup reserved state
-    const [reserved, setReserved] = useState(gift.giverId !== '');
-    const handleCheckboxChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const isChecked = event.target.checked;
-        setReserved(isChecked);
-
-        gift = await reserveGift(gift, isChecked);
-    };
-
-    // check if it is reserved by someone else
-    const otherReserved = (gift.giverId !== '' && gift.giverId !== window.usr?.id);
-
-    if (otherReserved) {
-        return <p className="font-extrabold text-2xl pt-6 px-4">
-            { gift.giverName} has reserved this gift
-        </p>
-    }
-
-    return <span className="flex">
-        <label htmlFor={`reserved-${gift.createdTs}`} className="font-extrabold text-2xl pt-6 px-4 custom-checkbox items-baseline cursor-pointer">
-            <input id={`reserved-${gift.createdTs}`} type="checkbox" name={`reserved-${gift.createdTs}`} onChange={handleCheckboxChange} checked={reserved} />
-            Reserve this gift
-        </label>
-    </span>
-}
+import { faFloppyDisk, faLink, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { saveGift } from './saveGift';
 
 async function removeGift(gift: Gift): Promise<boolean> {
     // ensure item id is present
@@ -82,14 +43,19 @@ async function reserveGift(gift: Gift, reserved: boolean): Promise<Gift> {
 }
 
 function GiftListItem({gift, isOwner}: {gift: Gift, isOwner: boolean}) {
-    const title = gift.title || 'Gift';
-    const desc = gift.description || '';
-    const store = gift.store || '';
-    const url = gift.url || false;
-
-    // setup gift hide action for deletion
+    const [giftData, setGiftData] = useState(gift);
     const [hidden, setHidden] = useState(false);
-    const hideRemovedGift = () => { setHidden(true) };
+    const [isEditing, setIsEditing] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [error, setError] = useState('');
+    const [editValues, setEditValues] = useState({
+        title: gift.title || '',
+        description: gift.description || '',
+        store: gift.store || '',
+        url: gift.url || ''
+    });
+    const [reserved, setReserved] = useState(gift.giverId !== '');
+
     const hide = useSpring({
         to: {
             opacity: hidden ? 0 : 1,
@@ -100,28 +66,168 @@ function GiftListItem({gift, isOwner}: {gift: Gift, isOwner: boolean}) {
         }
     });
 
+    const resetEditValues = () => setEditValues({
+        title: giftData.title || '',
+        description: giftData.description || '',
+        store: giftData.store || '',
+        url: giftData.url || ''
+    });
+
+    const formattedStore = isEditing ? editValues.store : (giftData.store || '');
+    const formattedTitle = isEditing ? editValues.title : (giftData.title || 'Gift');
+    const formattedDesc = isEditing ? editValues.description : (giftData.description || '');
+    const formattedUrl = isEditing ? editValues.url : (giftData.url || '');
+    const creatorOnly = gift.creatorId === window.usr?.id;
+
+    const handleReserveChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const isChecked = event.target.checked;
+        setReserved(isChecked);
+
+        const updatedGift = await reserveGift({ ...giftData }, isChecked);
+        setGiftData(updatedGift);
+    };
+
+    const otherReserved = (giftData.giverId !== '' && giftData.giverId !== window.usr?.id);
+    const canSave = editValues.title.trim().length > 0;
+
+    const handleSave = async () => {
+        if (!isEditing) {
+            setIsEditing(true);
+            setError('');
+            return;
+        }
+        if (!canSave) return;
+
+        setIsSaving(true);
+        setError('');
+        try {
+            const newGift = { ...giftData, ...editValues };
+            await saveGift(newGift);
+            setGiftData(newGift);
+            setIsEditing(false);
+        } catch (e) {
+            console.error(e);
+            setError('Unable to save the gift. Please try again.');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleCancelEdit = () => {
+        setIsEditing(false);
+        setError('');
+        resetEditValues();
+    };
+
+    const handleRemove = async () => {
+        const removed = await removeGift(giftData);
+        if (removed) setHidden(true);
+    };
+
     return <animated.li style={{...hide}} className="shadow-dark-out rounded-lg p-7 m-3 grid grid-cols-1 justify-start">
-            <div className="grid grid-cols-1 lg:grid-cols-2 justify-between items-center">
-                <p className="font-extrabold text-2xl grow">
-                    { title }
-                </p>
-                <p className="text-xl my-3 lg:m-0">
-                    { store || url ? 'Find it at ' : ''}
-                    {
-                        url ?
-                        <a href={ url } target='_blank' className='font-extrabold'>
-                            { store || 'this link' }
-                            <FontAwesomeIcon icon={faLink} className='ms-1' />
-                        </a>
-                        :
-                        <span className='font-extrabold'>
-                            { store }
-                        </span>
-                    }
-                </p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 justify-between items-center gap-4">
+            <p className="font-extrabold text-2xl grow w-full">
+                { isEditing ? (
+                    <input
+                        className="w-full shadow-light-in bg-gray-700 rounded-lg p-3"
+                        value={editValues.title}
+                        onChange={(e) => setEditValues(prev => ({ ...prev, title: e.target.value }))}
+                        placeholder="Gift title"
+                    />
+                ) : (
+                    formattedTitle
+                ) }
+            </p>
+            <div className="text-xl my-3 lg:m-0 w-full">
+                { isEditing ? (
+                    <>
+                        <label className="font-extrabold text-lg mb-2 block">Where can they get it?</label>
+                        <input
+                            className="w-full shadow-light-in bg-gray-700 rounded-lg p-3 mb-3"
+                            value={editValues.store}
+                            onChange={(e) => setEditValues(prev => ({ ...prev, store: e.target.value }))}
+                            placeholder="Store"
+                        />
+                        <label className="font-extrabold text-lg mb-2 block">What&apos;s the link?</label>
+                        <input
+                            className="w-full shadow-light-in bg-gray-700 rounded-lg p-3"
+                            value={editValues.url}
+                            onChange={(e) => setEditValues(prev => ({ ...prev, url: e.target.value }))}
+                            placeholder="https://example.com"
+                        />
+                    </>
+                ) : (
+                    <p>
+                        { formattedStore || formattedUrl ? 'Find it at ' : ''}
+                        {
+                            formattedUrl ?
+                            <a href={ formattedUrl } target='_blank' className='font-extrabold'>
+                                { formattedStore || 'this link' }
+                                <FontAwesomeIcon icon={faLink} className='ms-1' />
+                            </a>
+                            :
+                            <span className='font-extrabold'>
+                                { formattedStore }
+                            </span>
+                        }
+                    </p>
+                ) }
             </div>
-            <p className="font-thin">{ desc }</p>
-            { giftAction(gift, isOwner, hideRemovedGift) }
+        </div>
+        <div className="mt-4 w-full">
+            { isEditing ? (
+                <>
+                    <label className="font-extrabold text-lg mb-2 block">What is it?</label>
+                    <textarea
+                        className="w-full shadow-light-in bg-gray-700 rounded-lg p-3"
+                        rows={4}
+                        value={editValues.description}
+                        onChange={(e) => setEditValues(prev => ({ ...prev, description: e.target.value }))}
+                    />
+                </>
+            ) : (
+                <p className="font-thin">{ formattedDesc }</p>
+            ) }
+        </div>
+
+        { creatorOnly ? (
+            <div className="flex flex-wrap gap-3 mt-6">
+                <button
+                    onClick={handleSave}
+                    disabled={isSaving || (isEditing && !canSave)}
+                    className='shadow-light-in bg-gray-700 rounded-lg p-3 text-base font-extrabold flex items-center disabled:opacity-50'
+                >
+                    { isEditing ? (
+                        <>
+                            <FontAwesomeIcon icon={faFloppyDisk} className='me-1' />
+                            { isSaving ? 'Saving...' : 'Save Gift' }
+                        </>
+                    ) : (
+                        <>
+                            <FontAwesomeIcon icon={faPenToSquare} className='me-1' />
+                            Edit Gift
+                        </>
+                    ) }
+                </button>
+                { isEditing ? <button className='shadow-light-in bg-gray-700 rounded-lg p-3 text-base font-extrabold' onClick={handleCancelEdit} disabled={isSaving}>Cancel</button> : null }
+                <button onClick={handleRemove} className='shadow-light-in bg-gray-700 rounded-lg p-3 text-base font-extrabold'>
+                    <FontAwesomeIcon icon={faTrash} className='me-1' />
+                    Remove Gift
+                </button>
+                { error.length > 0 ? <p className="text-red-400 w-full">{ error }</p> : null }
+            </div>
+        ) : otherReserved ? (
+            <p className="font-extrabold text-2xl pt-6 px-4">
+                { giftData.giverName} has reserved this gift
+            </p>
+        ) : (
+            <span className="flex">
+                <label htmlFor={`reserved-${giftData.createdTs}`} className="font-extrabold text-2xl pt-6 px-4 custom-checkbox items-baseline cursor-pointer">
+                    <input id={`reserved-${giftData.createdTs}`} type="checkbox" name={`reserved-${giftData.createdTs}`} onChange={handleReserveChange} checked={reserved} />
+                    Reserve this gift
+                </label>
+            </span>
+        ) }
     </animated.li>
 }
 

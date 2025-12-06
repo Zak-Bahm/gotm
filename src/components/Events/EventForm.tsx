@@ -7,10 +7,10 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import '../../styles/react-calendar.css';
 import { useNavigate } from 'react-router-dom';
-import { PutCommand, PutCommandOutput } from "@aws-sdk/lib-dynamodb";
 
 import { EventFormType, GotmEvent } from './Event';
 import { encodeEventPath } from '../../helpers/paths';
+import { saveEvent } from './saveEvent';
 
 function convertFormToEvent(values: EventFormType): GotmEvent {
     // generate key values
@@ -34,13 +34,8 @@ function convertFormToEvent(values: EventFormType): GotmEvent {
 }
 
 async function putEvent(values: EventFormType): Promise<GotmEvent> {
-    // setup put command
     const event: GotmEvent = convertFormToEvent(values)
-    const command = new PutCommand({
-        TableName: window.app.tableName,
-        Item: event
-    });
-    await window.ddb.send(command);
+    await saveEvent(event);
 
     return event;
 }

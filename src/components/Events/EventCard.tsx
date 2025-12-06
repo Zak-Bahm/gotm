@@ -2,12 +2,13 @@ import { formatDistanceToNow } from 'date-fns';
 import { Dispatch, SetStateAction, useState, useEffect } from 'react';
 import SimpleLoad from '../SimpleLoad';
 import { GotmEvent } from './Event';
-import { GetCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import { GetCommand } from '@aws-sdk/lib-dynamodb';
 import { faFloppyDisk, faPenToSquare, faUsersViewfinder } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import { checkOwnerShip, encodeEventPath } from '../../helpers/paths';
 import { putEvent } from '../GroupEvents/AddEventForm';
+import { saveEvent } from './saveEvent';
 
 // for the events component, show the loading symbol if still loading,
 // otherwise an event card
@@ -62,24 +63,6 @@ async function leaveGroup(event: GotmEvent, setInGroup: (u: boolean) => void) {
     // then update event group participation
     event.groupEventId = '';
     setInGroup(false);
-}
-
-async function updateEventDetails(eventId: string, updates: { title: string; description: string; endTs: number }) {
-    const command = new UpdateCommand({
-        TableName: window.app.tableName,
-        Key: {
-            itemType: "event",
-            itemId: eventId
-        },
-        UpdateExpression: "set title = :title, description = :description, endTs = :endTs",
-        ExpressionAttributeValues: {
-            ":title": updates.title,
-            ":description": updates.description,
-            ":endTs": updates.endTs
-        }
-    });
-
-    return window.ddb.send(command);
 }
 
 function EventCard({event, setEvent}: {event: GotmEvent, setEvent: Dispatch<SetStateAction<GotmEvent | false>>}) {
@@ -141,20 +124,14 @@ function EventCard({event, setEvent}: {event: GotmEvent, setEvent: Dispatch<SetS
         setIsSaving(true);
         setError('');
         try {
-            await updateEventDetails(event.itemId, {
+            const updatedEvent: GotmEvent = {
+                ...event,
                 title: editValues.title,
                 description: editValues.description,
                 endTs: editValues.endTs
-            });
-            setEvent(prev => {
-                if (prev === false) return prev;
-                return {
-                    ...prev,
-                    title: editValues.title,
-                    description: editValues.description,
-                    endTs: editValues.endTs
-                };
-            });
+            };
+            await saveEvent(updatedEvent);
+            setEvent(updatedEvent);
             setIsEditing(false);
         } catch (e) {
             console.error(e);
@@ -263,7 +240,7 @@ function EventCard({event, setEvent}: {event: GotmEvent, setEvent: Dispatch<SetS
                         ) : (
                             <>
                                 <FontAwesomeIcon icon={faPenToSquare} className='me-1' />
-                                Edit
+                                Edit Event
                             </>
                         ) }
                     </button>
